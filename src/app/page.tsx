@@ -3,63 +3,60 @@ import Image from 'next/image';
 
 export default function Home() {
   return (
-    <div className="min-h-[85vh] flex flex-col justify-center relative">
-      {/* Decorative elements */}
-      <div className="absolute -top-20 -left-20 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
-      <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl"></div>
-      
-      <div className="max-w-4xl relative">
-        <div className="inline-block mb-4 px-3 py-1 rounded-full bg-blue-900/20 border border-blue-500/20 text-blue-400 text-sm">
-          Web Developer
-        </div>
+    <div className="py-20"> {/* Sama seperti About */}
+      <div className="max-w-4xl mx-auto px-4"> {/* Container yang sama dengan About */}
         
-        <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-          Building bridges between design and code
-        </h1>
-        
-        <div className="text-xl text-gray-400 mb-12 max-w-2xl">
-          <p>Im a web developer with a passion for creating visually stunning and highly functional websites.</p>
-        </div>
-
-        {/* Updated: Buttons + Profile combined */}
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-16">
-          {/* Left: Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-center">
-            <Link 
-              href="/work"
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 transition-all duration-300 group w-fit"
-            >
-              <span>View my work</span>
-              <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
-            </Link>
+        {/* Header Section - dibuat mirip struktur About */}
+        <div className="flex flex-col gap-8 mb-12 relative">
+          <div className="absolute -top-10 -left-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
+          
+          <div className="flex-1">
+            <h1 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+              Building bridges between design and code
+            </h1>
             
-            <Link 
-              href="/about"
-              className="px-4 py-2 bg-transparent border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white rounded-lg flex items-center gap-2 transition-all duration-300 group"
-            >
-              <span>About Faatih</span>
-              <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
-            </Link>
+            <div className="text-xl text-gray-400 mb-6">
+              <p>Im a web developer with a passion for creating visually stunning and highly functional websites.</p>
+            </div>
           </div>
 
-          {/* Right: Profile */}
-          <div className="flex items-center gap-4">
-            <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-gray-700">
-              <Image 
-                src="/Components/Profile.jpg"
-                alt="Muhammad Faatih"
-                fill
-                className="object-cover"
-              />
+          {/* Buttons + Profile */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link 
+                href="/work"
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 transition-all duration-300 group w-fit"
+              >
+                <span>View my work</span>
+                <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+              </Link>
+              
+              <Link 
+                href="/about"
+                className="px-6 py-3 bg-transparent border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white rounded-lg flex items-center gap-2 transition-all duration-300 group w-fit"
+              >
+                <span>About Faatih</span>
+                <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+              </Link>
             </div>
-            <div>
-              <h3 className="text-lg font-medium text-gray-100">Muhammad Faatih</h3>
-              <p className="text-sm text-gray-400">Web Developer | Junior</p>
+
+            <div className="flex items-center gap-4">
+              <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-gray-700">
+                <Image 
+                  src="/Components/Profile.jpg"
+                  alt="Muhammad Faatih"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-gray-100">Muhammad Faatih</h3>
+                <p className="text-sm text-gray-400">Web Developer | Junior</p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Project Section */}
         <div className="border-t border-gray-800 pt-8">
           <h2 className="flex items-center gap-4 text-xl mb-6">
             Featured project

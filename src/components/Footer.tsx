@@ -9,9 +9,9 @@ export default function Footer() {
       <div className="container mx-auto max-w-6xl">
         <div className="flex flex-col md:flex-row justify-between gap-8 md:gap-10">
           <div className="md:w-1/3">
-            <h3 className="text-2xl font-bold mb-4">Selene Yu</h3>
+            <h3 className="text-2xl font-bold mb-4">Muhammad Faatih</h3>
             <p className="text-gray-400 mb-6">
-              Design engineer focused on building products with extra attention to detail
+              Web developer with a passion for creating visually stunning and highly functional websites. I love to build things that live on the internet, whether that be websites, applications, or anything in between.
             </p>
             <div className="flex gap-4 mb-6">
               <a href="https://github.com" className="text-gray-400 hover:text-white transition-colors" target="_blank" rel="noopener noreferrer">
