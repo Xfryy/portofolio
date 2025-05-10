@@ -26,7 +26,6 @@ export default function Hero({
 }: HeroProps) {
   const [mounted, setMounted] = useState(false);
   
-  // Prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);

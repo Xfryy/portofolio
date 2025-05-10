@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 
-
 interface SkillCardProps {
   title: string;
   skills: string;

@@ -2,14 +2,11 @@
 
 import { motion } from 'framer-motion';
 import SkillCard from './SkillCard';
-
 import { useEffect, useState } from 'react';
 
 export default function SkillsSection() {
-
   const [mounted, setMounted] = useState(false);
   
-  // Prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -17,7 +14,7 @@ export default function SkillsSection() {
   if (!mounted) {
     return <div className="mb-12">Loading...</div>;
   }
-  
+
   return (
     <div className="mb-12">
       <motion.h2 
