@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 interface HeroProps {
@@ -25,7 +24,6 @@ export default function Hero({
   role = "Web Developer | Junior",
   customClass = ""
 }: HeroProps) {
-  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   
   // Prevent hydration mismatch
@@ -34,8 +32,6 @@ export default function Hero({
   }, []);
   
   if (!mounted) return null;
-  
-  const isDark = resolvedTheme === 'dark';
   
   return (
     <div className={`flex flex-col gap-8 mb-12 relative ${customClass}`}>

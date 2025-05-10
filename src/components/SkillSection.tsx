@@ -2,11 +2,11 @@
 
 import { motion } from 'framer-motion';
 import SkillCard from './SkillCard';
-import { useTheme } from 'next-themes';
+
 import { useEffect, useState } from 'react';
 
 export default function SkillsSection() {
-  const { theme } = useTheme();
+
   const [mounted, setMounted] = useState(false);
   
   // Prevent hydration mismatch
@@ -17,8 +17,6 @@ export default function SkillsSection() {
   if (!mounted) {
     return <div className="mb-12">Loading...</div>;
   }
-  
-  const isDark = theme === 'dark';
   
   return (
     <div className="mb-12">

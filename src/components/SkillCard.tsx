@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
-import { useTheme } from 'next-themes';
+
 
 interface SkillCardProps {
   title: string;
@@ -12,16 +12,13 @@ interface SkillCardProps {
 }
 
 export default function SkillCard({ title, skills, delay, icon }: SkillCardProps) {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-  
   return (
     <motion.div 
       className="rounded-xl p-5 backdrop-blur-sm transition-all hover:shadow-lg"
       style={{
-        backgroundColor: 'var(--card-bg)', // Dynamic card background
-        borderColor: 'var(--card-border)', // Dynamic border color
-        color: 'var(--text-primary)', // Ensure text is visible
+        backgroundColor: 'var(--card-bg)',
+        borderColor: 'var(--card-border)',
+        color: 'var(--text-primary)',
       }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
