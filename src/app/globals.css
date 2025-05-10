@@ -36,20 +36,20 @@
 }
 
 [data-theme="light"] {
-  --background: #ffffff; /* Pure white background for better contrast */
+  --background: #f8fafc; /* Softer white background */
   --foreground: #000000;
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 255, 255, 255; /* Gradient start */
-  --background-end-rgb: 245, 245, 245; /* Gradient end */
-  --text-primary: #111827; /* Darker text for better readability */
-  --text-secondary: #374151; /* Softer secondary text */
-  --border-color: rgba(209, 213, 219, 0.7); /* Slightly darker borders */
-  --card-bg: rgba(255, 255, 255, 0.9); /* Brighter card background */
+  --background-start-rgb: 248, 250, 252; /* Lighter blue-gray start */
+  --background-end-rgb: 241, 245, 249; /* Slightly darker blue-gray end */
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --border-color: rgba(209, 213, 219, 0.7);
+  --card-bg: rgba(255, 255, 255, 0.9);
   --card-border: rgba(209, 213, 219, 0.7);
-  --navbar-bg: rgba(255, 255, 255, 0.9); /* Brighter navbar */
-  --button-primary-bg: #2563eb; /* Vibrant blue for buttons */
+  --navbar-bg: rgba(255, 255, 255, 0.9);
+  --button-primary-bg: #2563eb;
   --button-primary-text: #ffffff;
-  --button-secondary-bg: rgba(229, 231, 235, 0.8); /* Subtle secondary button */
+  --button-secondary-bg: rgba(229, 231, 235, 0.8);
   --button-secondary-text: #374151;
   --button-secondary-border: rgba(209, 213, 219, 0.8);
   color-scheme: light;
@@ -78,10 +78,12 @@
 
 body {
   background: linear-gradient(
-      to bottom,
-      rgb(var(--background-start-rgb)),
-      rgb(var(--background-end-rgb))
-    );
+    135deg,
+    rgb(var(--background-start-rgb)),
+    rgb(var(--background-end-rgb)),
+    rgb(var(--background-start-rgb))
+  );
+  background-attachment: fixed; /* This prevents gradient from scrolling */
   color: var(--text-primary);
   font-family: var(--font-sans), sans-serif;
   transition: all 0.3s ease;

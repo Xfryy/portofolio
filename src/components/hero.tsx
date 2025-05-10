@@ -50,7 +50,7 @@ export default function Hero({
       
       <div className="flex-1">
         <motion.h1 
-          className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400"
+          className="text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 leading-tight"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -59,7 +59,7 @@ export default function Hero({
         </motion.h1>
         
         <motion.div 
-          className="text-xl text-gray-600 dark:text-gray-400 mb-6"
+          className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-6 max-w-2xl"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
@@ -83,20 +83,12 @@ export default function Hero({
               <span>View my work</span>
               <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
             </Link>
-            
-            <Link 
-              href="/about"
-              className="px-6 py-3 bg-transparent border border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-lg flex items-center gap-2 transition-all duration-300 group w-fit hover:bg-gray-200/50 dark:hover:bg-gray-800/50"
-            >
-              <span>About Faatih</span>
-              <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
-            </Link>
           </div>
 
           {showProfile && (
-            <div className="flex items-center gap-4">
+            <Link href="/about" className="flex items-center gap-4 group">
               <motion.div 
-                className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-700 hover:border-blue-500 transition-all duration-300"
+                className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-700 hover:border-blue-500 transition-all duration-300"
                 whileHover={{ scale: 1.1 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
@@ -107,11 +99,11 @@ export default function Hero({
                   className="object-cover"
                 />
               </motion.div>
-              <div>
+              <div className="group-hover:text-blue-500 transition-colors duration-300">
                 <h3 className="text-lg font-medium text-gray-800 dark:text-gray-100">Muhammad Faatih</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{role}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-400 transition-colors duration-300">{role}</p>
               </div>
-            </div>
+            </Link>
           )}
         </motion.div>
       )}

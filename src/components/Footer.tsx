@@ -30,7 +30,7 @@ export default function Footer() {
           <div className="col-span-1">
             <Link href="/" className="font-bold text-xl text-gray-900 dark:text-white flex items-center gap-2 mb-4">
               <motion.div 
-                className="w-8 h-8 rounded-full flex items-center justify-center"
+                className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
@@ -39,7 +39,7 @@ export default function Footer() {
                   alt="Logo" 
                   width={32} 
                   height={32} 
-                  className="rounded-full"
+                  className="rounded-full object-cover"
                 />
               </motion.div>
               {/* Fixed the color to adapt to both light and dark mode */}

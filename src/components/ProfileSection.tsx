@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
 interface ProfileSectionProps {
@@ -8,60 +9,90 @@ interface ProfileSectionProps {
   role: string;
   location: string;
   imageUrl: string;
+  onExpand?: (expanded: boolean) => void;
 }
 
-export default function ProfileSection({ name, role, location, imageUrl }: ProfileSectionProps) {
+export default function ProfileSection({ name, role, location, imageUrl, onExpand }: ProfileSectionProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleExpand = () => {
+    const newState = !isExpanded;
+    setIsExpanded(newState);
+    onExpand?.(newState);
+  };
+
   return (
-    <div className="mb-16 text-center">
-      <motion.div 
-        className="mb-6 relative w-32 h-32 mx-auto rounded-full overflow-hidden border-4"
-        style={{
-          borderColor: 'var(--border-color)', // Dynamic border color
-          backgroundColor: 'var(--card-bg)', // Add background for better contrast
-        }}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <Image 
-          src={imageUrl} 
-          alt={name}
-          fill
-          className="object-cover"
-        />
-      </motion.div>
-      
-      <motion.h1 
-        className="text-3xl font-bold mb-2"
-        style={{ color: 'var(--text-primary)' }} // Ensure text is visible
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        {name}
-      </motion.h1>
-      
-      <motion.div
-        className="text-lg mb-4 text-blue-600 dark:text-blue-400" 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-      >
-        {role}
-      </motion.div>
-      
-      <motion.div 
-        className="flex items-center justify-center text-sm text-gray-500 dark:text-gray-400"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
-          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-          <circle cx="12" cy="10" r="3"></circle>
-        </svg>
-        {location}
-      </motion.div>
-    </div>
+    <>
+      <div className="text-center relative z-10">
+        <motion.div
+          layout
+          className="relative inline-block"
+          animate={{ 
+            scale: isExpanded ? 
+              // Smaller scale on mobile, larger on desktop
+              window.innerWidth < 768 ? 1.2 : 1.5 
+              : 1 
+          }}
+          transition={{ type: "spring", bounce: 0.3 }}
+        >
+          <motion.div
+            className={`relative cursor-pointer overflow-visible ${
+              isExpanded ? 'rounded-full shadow-2xl' : 'rounded-2xl'
+            }`}
+            style={{
+              width: isExpanded 
+                ? window.innerWidth < 768 ? '250px' : '300px'
+                : '200px',
+              height: isExpanded 
+                ? window.innerWidth < 768 ? '250px' : '300px'
+                : '200px',
+            }}
+            onClick={toggleExpand}
+            layoutId="profile-image"
+            whileHover={{ scale: isExpanded ? 1 : 1.05 }}
+          >
+            <Image
+              src={imageUrl}
+              alt={name}
+              fill
+              className="object-cover rounded-full"
+              priority
+            />
+            <motion.div
+              initial={false}
+              animate={{
+                boxShadow: isExpanded
+                  ? '0 0 50px rgba(59, 130, 246, 0.5)'
+                  : '0 0 0px rgba(59, 130, 246, 0)'
+              }}
+              className="absolute inset-0 rounded-full"
+            />
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          layout
+          className="mt-6 space-y-2"
+          animate={{ opacity: isExpanded ? 0 : 1 }}
+        >
+          <h1 className="text-3xl font-bold">{name}</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-400">{role}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-500">{location}</p>
+        </motion.div>
+      </div>
+
+      {/* Overlay for expanded state */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-0"
+            onClick={toggleExpand}
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 }
