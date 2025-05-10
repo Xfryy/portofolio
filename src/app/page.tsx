@@ -21,7 +21,6 @@ export default function Home() {
           <FeaturedProject 
             title="Next.js"
             description="A modern, server-rendered React framework for building full-stack web applications"
-            imageUrl="/project-thumbnail.jpg"
             projectUrl="/work/nextjs"
             role="Fullstack developer"
             technologies={['Next.js', 'React', 'TypeScript']}
