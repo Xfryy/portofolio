@@ -1,34 +1,89 @@
-"use client"
+"use client";
 
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
 
-const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+// Move nav items outside component to avoid re-creation on every render
+const NAV_ITEMS = [
+  { 
+    name: 'Home', 
+    path: '/',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+    )
+  },
+  { 
+    name: 'About', 
+    path: '/about',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="8" r="4"></circle>
+        <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path>
+      </svg>
+    )
+  },
+  { 
+    name: 'Work', 
+    path: '/work',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 7V5c0-1.1.9-2 2-2h2"></path>
+        <path d="M19 7V5c0-1.1-.9-2-2-2h-2"></path>
+        <path d="M21 21H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2Z"></path>
+        <path d="M16 3v4"></path>
+        <path d="M8 3v4"></path>
+      </svg>
+    )
+  },
+  { 
+    name: 'Blog', 
+    path: '/blog',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
+        <path d="M8 7h6"></path>
+        <path d="M8 11h8"></path>
+      </svg>
+    )
+  },
+  { 
+    name: 'Contact', 
+    path: '/contact',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+      </svg>
+    )
+  },
+];
+
+export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(true); // State for theme
   const pathname = usePathname();
-
-  // Handle scroll effect with debounce
+  
+  // Improved scroll handler using requestAnimationFrame
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      let scrollTimer: ReturnType<typeof setTimeout>;
-      
-      const handleScroll = () => {
-        clearTimeout(scrollTimer);
-        scrollTimer = setTimeout(() => {
-          setIsScrolled(window.scrollY > 10);
-        }, 10);
-      };
-      
-      window.addEventListener('scroll', handleScroll);
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-        clearTimeout(scrollTimer);
-      };
-    }
+    let ticking = false;
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 10);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   // Time update effect
@@ -49,21 +104,39 @@ const Navbar = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  // Check initial theme on mount
+  useEffect(() => {
+    // Check if we're on the client-side
+    if (typeof window !== 'undefined') {
+      // Check if user has previously set a theme preference
+      const storedTheme = localStorage.getItem('theme');
+      if (storedTheme === 'light') {
+        setIsDarkMode(false);
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else {
+        setIsDarkMode(true);
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      }
+    }
+  }, []);
+
   // Handle escape key to close menu
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && isMenuOpen) {
-        setIsMenuOpen(false);
+      if (event.key === 'Escape' && mobileMenuOpen) {
+        setMobileMenuOpen(false);
       }
     };
 
     window.addEventListener('keydown', handleEscKey);
     return () => window.removeEventListener('keydown', handleEscKey);
-  }, [isMenuOpen]);
+  }, [mobileMenuOpen]);
 
   // Prevent body scroll when menu is open
   useEffect(() => {
-    if (isMenuOpen) {
+    if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -71,257 +144,238 @@ const Navbar = () => {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isMenuOpen]);
+  }, [mobileMenuOpen]);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
-  };
+  // Handle theme toggle with localStorage persistence
+  const toggleTheme = useCallback(() => {
+    const newThemeState = !isDarkMode;
+    setIsDarkMode(newThemeState);
+    document.documentElement.setAttribute('data-theme', newThemeState ? 'dark' : 'light');
+    localStorage.setItem('theme', newThemeState ? 'dark' : 'light');
+  }, [isDarkMode]);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const navItems = [
-    { 
-      name: 'Home', 
-      path: '/',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
-      )
-    },
-    { 
-      name: 'About', 
-      path: '/about',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="8" r="4"></circle>
-          <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path>
-        </svg>
-      )
-    },
-    { 
-      name: 'Work', 
-      path: '/work',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 7V5c0-1.1.9-2 2-2h2"></path>
-          <path d="M19 7V5c0-1.1-.9-2-2-2h-2"></path>
-          <path d="M21 21H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2Z"></path>
-          <path d="M16 3v4"></path>
-          <path d="M8 3v4"></path>
-          <path d="M12 12h0"></path>
-          <path d="M12 16h0"></path>
-          <path d="M16 12h0"></path>
-          <path d="M16 16h0"></path>
-          <path d="M8 12h0"></path>
-          <path d="M8 16h0"></path>
-        </svg>
-      )
-    },
-    { 
-      name: 'Blog', 
-      path: '/blog',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
-          <path d="M8 7h6"></path>
-          <path d="M8 11h8"></path>
-        </svg>
-      )
-    },
-    { 
-      name: 'Gallery', 
-      path: '/gallery',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5z"></path>
-          <path d="m3 15 6-6c.928-.893 2.072-.893 3 0l5 5"></path>
-          <path d="m14 14 1-1c.928-.893 2.072-.893 3 0l3 3"></path>
-          <circle cx="13.5" cy="7.5" r="1.5"></circle>
-        </svg>
-      )
-    },
-  ];
-
+  // Dynamic styles based on theme
+  const locationBgClass = isDarkMode ? 'bg-gray-900/40' : 'bg-white/60';
+  const locationBorderClass = isDarkMode ? 'border-gray-800/50' : 'border-gray-300/50';
+  const navbarBgClass = isDarkMode ? 'bg-gray-900/80' : 'bg-white/80';
+  const navbarBorderClass = isDarkMode 
+    ? (scrolled ? 'border-gray-800/50' : 'border-gray-800/30') 
+    : (scrolled ? 'border-gray-300/70' : 'border-gray-300/50');
+  const menuBgClass = isDarkMode ? 'bg-gray-700' : 'bg-gray-200';
+  const menuTextClass = isDarkMode ? 'text-white' : 'text-gray-800';
+  const activeLinkBgClass = isDarkMode ? 'bg-blue-500/10' : 'bg-blue-500/20';
+  const activeLinkTextClass = 'text-blue-600';
+  const inactiveLinkTextClass = isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900';
+  const inactiveLinkHoverBgClass = isDarkMode ? 'hover:bg-gray-800/70' : 'hover:bg-gray-200/70';
+  const mobileMenuBgClass = isDarkMode 
+    ? 'bg-gradient-to-b from-gray-900 to-[#0A0D11]' 
+    : 'bg-gradient-to-b from-gray-100 to-white';
+  const mobileBorderClass = isDarkMode ? 'border-gray-800/50' : 'border-gray-300/50';
+  
   return (
     <>
       {/* Location & Time display with glassmorphism effect */}
-      <div className="hidden md:flex fixed top-6 w-full justify-between px-6 text-sm text-gray-300 z-40 items-center">
-        <div className="flex items-center gap-2 bg-gray-900/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-gray-800/50">
+      <motion.div 
+        className="hidden md:flex fixed top-6 w-full justify-between px-6 text-sm z-40 items-center"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.5 }}
+      >
+        <div className={`flex items-center gap-2 ${locationBgClass} backdrop-blur-md px-3 py-1.5 rounded-full border ${locationBorderClass}`}>
           <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-          Asia/Jakarta
+          <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>Asia/Jakarta</span>
         </div>
-        <div className="bg-gray-900/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-gray-800/50">
+        <div className={`${locationBgClass} backdrop-blur-md px-3 py-1.5 rounded-full border ${locationBorderClass} ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
           {currentTime}
         </div>
-      </div>
+      </motion.div>
       
-      <nav className={`fixed w-full top-0 z-40 flex justify-center transition-all duration-500 ${
-        isScrolled ? 'py-3' : 'py-6'
+      <nav className={`fixed w-full top-0 z-50 flex justify-center transition-all duration-500 ${
+        scrolled ? 'py-3' : 'py-6'
       }`}>
-        <div className={`bg-gray-900/80 backdrop-blur-lg rounded-full border transition-all duration-500 ${
-          isScrolled 
-            ? 'border-gray-800/50 shadow-lg shadow-blue-900/10 px-3 py-1' 
-            : 'border-gray-800/30 px-3 py-1.5'
-        }`}>
+        <motion.div 
+          className={`${navbarBgClass} backdrop-blur-lg rounded-full border transition-all duration-500 ${
+            scrolled 
+              ? `${navbarBorderClass} shadow-lg ${isDarkMode ? 'shadow-blue-900/10' : 'shadow-blue-200/30'} px-3 py-1` 
+              : `${navbarBorderClass} px-3 py-1.5`
+          }`}
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
           <div className="flex items-center h-10">
             {/* Logo area for larger screens */}
             <div className="hidden md:flex items-center mr-2">
-              <Link href="/" className="text-blue-400 font-semibold px-3">
-                SY
+              <Link href="/" className={`${isDarkMode ? 'text-blue-400' : 'text-blue-600'} font-semibold px-3 flex items-center gap-2`}>
+                <motion.div 
+                  className="w-8 h-8 rounded-full flex items-center justify-center"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <Image 
+                    src="/Components/f.png" 
+                    alt="Logo" 
+                    width={32} 
+                    height={32} 
+                    className="rounded-full"
+                  />
+                </motion.div>
+                <span className={isDarkMode ? 'text-white' : 'text-gray-900'}>Faatih</span>
               </Link>
-              <div className="h-5 w-px bg-gray-800 mx-1"></div>
+              <div className={`h-5 w-px ${isDarkMode ? 'bg-gray-800' : 'bg-gray-300'} mx-1`}></div>
             </div>
             
             {/* Mobile menu button with animation */}
             <button 
-              onClick={toggleMenu}
-              className="md:hidden px-3 py-2 rounded-full text-gray-300 hover:text-white transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={`md:hidden px-3 py-2 rounded-full ${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors`}
               aria-label="Toggle menu"
             >
               <div className="w-5 h-5 relative">
                 <span className={`absolute h-0.5 w-5 bg-current transform transition-all duration-300 ${
-                  isMenuOpen ? 'rotate-45 top-2' : 'top-1'
+                  mobileMenuOpen ? 'rotate-45 top-2' : 'top-1'
                 }`}></span>
                 <span className={`absolute h-0.5 w-5 bg-current transform transition-all duration-300 ${
-                  isMenuOpen ? 'opacity-0' : 'top-2'
+                  mobileMenuOpen ? 'opacity-0' : 'top-2'
                 }`}></span>
                 <span className={`absolute h-0.5 w-5 bg-current transform transition-all duration-300 ${
-                  isMenuOpen ? '-rotate-45 top-2' : 'top-3'
+                  mobileMenuOpen ? '-rotate-45 top-2' : 'top-3'
                 }`}></span>
               </div>
             </button>
 
-            {/* Navigation items with improved hover effects */}
-            {navItems.map((item) => (
+            {/* Navigation items */}
+            {NAV_ITEMS.map((item) => (
               <Link 
                 key={item.path}
                 href={item.path} 
                 className={`flex items-center gap-2 px-3 py-2 rounded-full transition-all duration-300 ${
                   pathname === item.path 
-                    ? 'text-blue-400 bg-blue-500/10 font-medium' 
-                    : 'text-gray-300 hover:text-white hover:bg-gray-800/70'
+                    ? `${activeLinkTextClass} ${activeLinkBgClass} font-medium` 
+                    : `${inactiveLinkTextClass} ${inactiveLinkHoverBgClass}`
                 }`}
               >
-                <span className={`md:hidden lg:block ${pathname === item.path ? 'text-blue-400' : ''}`}>{item.icon}</span>
+                <span className={`md:hidden lg:block ${pathname === item.path ? activeLinkTextClass : ''}`}>{item.icon}</span>
                 <span className="hidden md:block">{item.name}</span>
               </Link>
             ))}
 
-            {/* Dark Mode Toggle with animation */}
-            <button 
-              onClick={toggleDarkMode}
-              className="px-3 py-2 rounded-full text-gray-300 hover:text-white hover:bg-gray-800/70 transition-all duration-300 ml-1"
-              aria-label="Toggle dark mode"
+            {/* Light/Dark Mode Toggle Button */}
+            <motion.button
+              className={`hidden md:flex px-4 py-1.5 ${menuBgClass} ${menuTextClass} rounded-full transition-colors duration-300 items-center gap-2 ml-2`}
+              onClick={toggleTheme}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <div className="w-5 h-5 relative">
-                {isDarkMode ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-all duration-300">
-                    <circle cx="12" cy="12" r="4"></circle>
-                    <path d="M12 2v2"></path>
-                    <path d="M12 20v2"></path>
-                    <path d="m4.93 4.93 1.41 1.41"></path>
-                    <path d="m17.66 17.66 1.41 1.41"></path>
-                    <path d="M2 12h2"></path>
-                    <path d="M20 12h2"></path>
-                    <path d="m6.34 17.66-1.41 1.41"></path>
-                    <path d="m19.07 4.93-1.41 1.41"></path>
+              {isDarkMode ? (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <path d="M12 1v2"></path>
+                    <path d="M12 21v2"></path>
+                    <path d="M4.22 4.22l1.42 1.42"></path>
+                    <path d="M18.36 18.36l1.42 1.42"></path>
+                    <path d="M1 12h2"></path>
+                    <path d="M21 12h2"></path>
+                    <path d="M4.22 19.78l1.42-1.42"></path>
+                    <path d="M18.36 5.64l1.42-1.42"></path>
                   </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-all duration-300">
-                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                  <span>Light Mode</span>
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79z"></path>
                   </svg>
-                )}
-              </div>
-            </button>
+                  <span>Dark Mode</span>
+                </>
+              )}
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
       </nav>
 
-      {/* Mobile menu with improved animations and layout */}
-      {isMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-30 flex flex-col">
-          <div 
-            className="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300"
-            onClick={toggleMenu}
-          ></div>
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-40 flex flex-col">
+          <motion.div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-md"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setMobileMenuOpen(false)}
+          ></motion.div>
           
-          <div className="relative h-full w-full bg-gradient-to-b from-gray-900 to-[#0A0D11] flex flex-col overflow-auto">
-            <div className="flex justify-end p-6">
-              <button 
-                onClick={toggleMenu}
-                className="p-2 rounded-full text-gray-300 hover:text-white transition-colors"
-                aria-label="Close menu"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 6L6 18M6 6l12 12"></path>
-                </svg>
-              </button>
-            </div>
+          <motion.div 
+            className={`relative h-full w-full ${mobileMenuBgClass} flex flex-col overflow-auto`}
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
             
             <div className="flex flex-col justify-center items-center h-full -mt-16 px-6">
-              {navItems.map((item, index) => (
-                <Link 
+              {NAV_ITEMS.map((item, index) => (
+                <motion.div
                   key={item.path}
-                  href={item.path} 
-                  className={`flex items-center gap-4 text-2xl py-5 border-b border-gray-800/50 w-full transition-all ${
-                    pathname === item.path 
-                      ? 'text-blue-400 font-medium' 
-                      : 'text-gray-300 hover:text-white'
-                  }`}
-                  onClick={toggleMenu}
-                  style={{ 
-                    animationDelay: `${index * 0.1}s`,
-                  }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.3 }}
                 >
-                  <span className="text-blue-500/80">{item.icon}</span>
-                  <span>{item.name}</span>
-                  {pathname === item.path && (
-                    <span className="ml-auto">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
-                    </span>
-                  )}
-                </Link>
+                  <Link 
+                    href={item.path} 
+                    className={`flex items-center gap-4 text-2xl py-5 border-b ${mobileBorderClass} w-full transition-all ${
+                      pathname === item.path 
+                        ? `${activeLinkTextClass} font-medium` 
+                        : isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <span className={isDarkMode ? 'text-blue-500/80' : 'text-blue-600/80'}>{item.icon}</span>
+                    <span>{item.name}</span>
+                    {pathname === item.path && (
+                      <span className="ml-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                      </span>
+                    )}
+                  </Link>
+                </motion.div>
               ))}
-              
-              <div className="flex gap-8 mt-12">
-                <a href="https://github.com" className="text-gray-400 hover:text-white p-2 hover:bg-gray-800/50 rounded-full transition-all" target="_blank" rel="noopener noreferrer">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
-                    <path d="M9 18c-4.51 2-5-2-7-2"></path>
-                  </svg>
-                </a>
-                <a href="https://linkedin.com" className="text-gray-400 hover:text-white p-2 hover:bg-gray-800/50 rounded-full transition-all" target="_blank" rel="noopener noreferrer">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                    <rect width="4" height="12" x="2" y="9"></rect>
-                    <circle cx="4" cy="4" r="2"></circle>
-                  </svg>
-                </a>
-                <a href="mailto:contact@example.com" className="text-gray-400 hover:text-white p-2 hover:bg-gray-800/50 rounded-full transition-all">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                  </svg>
-                </a>
-              </div>
-              
-              <div className="absolute bottom-10 text-sm text-gray-500 flex items-center gap-2">
-                <span className="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                <div>Asia/Jakarta — {currentTime}</div>
-              </div>
             </div>
-          </div>
+
+            {/* Move theme toggle button to the bottom */}
+            <div className="p-6 mt-auto">
+              <motion.button
+                className={`w-full p-3 rounded-full ${menuBgClass} ${menuTextClass} transition-colors`}
+                onClick={toggleTheme}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {isDarkMode ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                  </svg>
+                )}
+              </motion.button>
+            </div>
+          </motion.div>
         </div>
       )}
     </>
   );
-};
-
-export default Navbar;
+}

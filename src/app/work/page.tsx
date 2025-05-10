@@ -7,7 +7,7 @@ export default function Work() {
       id: 'once-ui',
       title: 'Once UI',
       description: 'A modern React component library built with Tailwind CSS',
-      image: '/projects/once-ui.jpg', // Updated path
+      image: '/projects/once-ui.jpg',
       category: 'Design System',
       year: '2023',
       tags: ['React', 'TypeScript', 'Tailwind CSS'],
@@ -17,7 +17,7 @@ export default function Work() {
       id: 'travel-app',
       title: 'Wanderlust',
       description: 'Travel discovery app with personalized recommendations',
-      image: '/projects/travel-app.jpg', // Updated path
+      image: '/projects/travel-app.jpg',
       category: 'Mobile App',
       year: '2022',
       tags: ['React Native', 'Firebase', 'Maps API'],
@@ -27,7 +27,7 @@ export default function Work() {
       id: 'food-delivery',
       title: 'FoodFast',
       description: "Food delivery platform with real-time order tracking",
-      image: '/project-food.jpg',
+      image: '/projects/project-food.jpg',
       category: 'Web Platform',
       year: '2022',
       tags: ['Next.js', 'Node.js', 'MongoDB'],
@@ -37,7 +37,7 @@ export default function Work() {
       id: 'fitness-tracker',
       title: 'FitPal',
       description: 'Fitness tracking app with personalized workout plans',
-      image: '/project-fitness.jpg',
+      image: '/projects/project-fitness.jpg',
       category: 'Mobile App',
       year: '2021',
       tags: ['Flutter', 'Firebase', 'HealthKit'],
@@ -52,10 +52,10 @@ export default function Work() {
         <div className="mb-16 relative">
           <div className="absolute -top-20 -left-20 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
           
-          <h1 className="text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+          <h1 className="text-5xl font-bold mb-6 text-primary">
             Selected Work
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl">
+          <p className="text-xl text-secondary max-w-2xl">
             A collection of projects I`ve worked on as a design engineer, focused on creating beautiful and functional digital experiences.
           </p>
         </div>
@@ -66,7 +66,7 @@ export default function Work() {
             <Link 
               href={`/work/${project.id}`}
               key={project.id}
-              className="group relative overflow-hidden rounded-xl border border-gray-800 hover:border-gray-700 transition-all duration-300"
+              className="group relative overflow-hidden rounded-xl bg-card border border-themed hover:border-gray-400 dark:hover:border-gray-700 transition-all duration-300"
             >
               {/* Project Image */}
               <div className="relative h-52 w-full overflow-hidden">
@@ -92,14 +92,14 @@ export default function Work() {
                     <div className="h-1 w-1 rounded-full bg-blue-500"></div>
                     <p className="text-sm text-blue-400">{project.category}</p>
                   </div>
-                  <p className="text-sm text-gray-500">{project.year}</p>
+                  <p className="text-sm text-secondary">{project.year}</p>
                 </div>
                 
-                <h3 className="text-xl font-bold mb-2 group-hover:text-blue-400 transition-colors">
+                <h3 className="text-xl font-bold mb-2 text-primary group-hover:text-blue-400 transition-colors">
                   {project.title}
                 </h3>
                 
-                <p className="text-gray-400 mb-4">
+                <p className="text-secondary mb-4">
                   {project.description}
                 </p>
                 
@@ -107,7 +107,7 @@ export default function Work() {
                   {project.tags.map((tag) => (
                     <span 
                       key={tag} 
-                      className="px-2 py-1 bg-gray-800 text-gray-300 rounded-full text-xs"
+                      className="px-2 py-1 bg-card text-secondary rounded-full text-xs border border-themed"
                     >
                       {tag}
                     </span>
@@ -130,8 +130,8 @@ export default function Work() {
         
         {/* Contact Section */}
         <div className="mt-20 p-8 bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-xl border border-blue-900/30 text-center">
-          <h2 className="text-2xl font-bold mb-4">Interested in working together?</h2>
-          <p className="text-gray-400 mb-6 max-w-lg mx-auto">
+          <h2 className="text-2xl font-bold mb-4 text-primary">Interested in working together?</h2>
+          <p className="text-secondary mb-6 max-w-lg mx-auto">
             I&apos;m always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
           </p>
           <Link
