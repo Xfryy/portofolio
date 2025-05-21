@@ -12,7 +12,7 @@ export default function Work() {
       id: 'Abey-homey',
       title: 'Abey Homey Website',
       description: 'A modern React component library built with Tailwind CSS',
-      image: '/projects/abey.png',
+      image: '/projects/Abeyhomey.png',
       category: 'Web Pages',
       year: '2025',
       tags: ['React', 'TypeScript', 'Tailwind CSS','MongoDb','Next.js', 'Claudinary'],

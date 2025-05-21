@@ -18,14 +18,8 @@ export default function ProfileSection({ name, role, location, imageUrl, onExpan
   const [windowWidth, setWindowWidth] = useState(0);
   
   useEffect(() => {
-    // Set initial window width
     setWindowWidth(window.innerWidth);
-    
-    // Update window width on resize
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-    
+    const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -49,15 +43,15 @@ export default function ProfileSection({ name, role, location, imageUrl, onExpan
         <motion.div
           layout
           className="relative inline-block"
-          animate={{ 
-            scale: isExpanded ? 
-              windowWidth < 768 ? 1.2 : 1.5 
-              : 1 
+          transition={{ 
+            type: "spring",
+            stiffness: 150,
+            damping: 20,
+            mass: 0.5
           }}
-          transition={{ type: "spring", bounce: 0.3 }}
         >
           <motion.div
-            className={`relative cursor-pointer overflow-visible ${
+            className={`relative cursor-pointer overflow-hidden ${
               isExpanded ? 'rounded-full shadow-2xl' : 'rounded-2xl'
             }`}
             style={{
@@ -71,6 +65,12 @@ export default function ProfileSection({ name, role, location, imageUrl, onExpan
             onClick={toggleExpand}
             layoutId="profile-image"
             whileHover={{ scale: isExpanded ? 1 : 1.05 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 150,
+              damping: 20,
+              mass: 0.5
+            }}
           >
             <Image
               src={imageUrl}
@@ -78,49 +78,55 @@ export default function ProfileSection({ name, role, location, imageUrl, onExpan
               fill
               className="object-cover rounded-full"
               priority
-            />
-            <motion.div
-              initial={false}
-              animate={{
-                boxShadow: isExpanded
-                  ? '0 0 50px rgba(59, 130, 246, 0.5)'
-                  : '0 0 0px rgba(59, 130, 246, 0)'
-              }}
-              className="absolute inset-0 rounded-full"
+              sizes="(max-width: 768px) 250px, 300px"
             />
             
-            {/* Pulse animation ring */}
+            
+            {/* Improved Pulse Animation Ring */}
             {!isExpanded && (
               <motion.div
-                className="absolute inset-0 rounded-full"
-                initial={{ opacity: 0.7, scale: 1 }}
+                className="absolute inset-0 rounded-full pointer-events-none"
+                initial={{ 
+                  opacity: 0,
+                  scale: 1,
+                  borderWidth: '4px',
+                  borderColor: 'rgba(59, 130, 246, 0)'
+                }}
                 animate={{ 
-                  opacity: [0.7, 0.5, 0.3, 0], 
-                  scale: [1, 1.05, 1.1, 1.15],
+                  opacity: [0, 0.7, 0],
+                  scale: [1, 1.15, 1.3],
+                  borderColor: [
+                    'rgba(59, 130, 246, 0)',
+                    'rgba(59, 130, 246, 0.5)',
+                    'rgba(59, 130, 246, 0)'
+                  ]
                 }}
                 transition={{
-                  times: [0, 0.3, 0.6, 1],
+                  duration: 2,
+                  ease: "easeOut",
                   repeat: Infinity,
-                  duration: 2
+                  repeatDelay: 1,
+                  times: [0, 0.5, 1]
                 }}
                 style={{
-                  border: '2px solid rgba(59, 130, 246, 0.5)',
+                  borderStyle: 'solid'
                 }}
               />
             )}
           </motion.div>
         </motion.div>
 
+        {/* Rest of the component remains the same */}
         <motion.div
           layout
           className="mt-6 space-y-4"
           animate={{ opacity: isExpanded ? 0 : 1 }}
+          transition={{ duration: 0.3 }}
         >
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">{name}</h1>
           <p className="text-xl text-gray-600 dark:text-gray-400">{role}</p>
           <p className="text-sm text-gray-500 dark:text-gray-500">{location}</p>
           
-          {/* Social Links */}
           <motion.div 
             className="flex justify-center gap-4 mt-4"
             initial={{ opacity: 0, y: 10 }}
@@ -145,7 +151,6 @@ export default function ProfileSection({ name, role, location, imageUrl, onExpan
             ))}
           </motion.div>
           
-          {/* CTA Button */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -161,7 +166,6 @@ export default function ProfileSection({ name, role, location, imageUrl, onExpan
         </motion.div>
       </div>
 
-      {/* Overlay for expanded state */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -170,6 +174,7 @@ export default function ProfileSection({ name, role, location, imageUrl, onExpan
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-0"
             onClick={toggleExpand}
+            transition={{ duration: 0.3 }}
           />
         )}
       </AnimatePresence>
