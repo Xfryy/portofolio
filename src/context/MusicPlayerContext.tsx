@@ -36,7 +36,37 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   const [progress, setProgress] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const isInitialLoad = useRef(true);
-  const isUserInteracted = useRef(false);
+
+  // Function to move to next song - defined earlier so it can be referenced
+  const nextSong = () => {
+    if (!playlist.length || !currentSong) return;
+    
+    const currentIndex = playlist.findIndex(song => song.file === currentSong.file);
+    const nextIndex = (currentIndex + 1) % playlist.length;
+    setCurrentSong(playlist[nextIndex]);
+    setIsPlaying(true);
+  };
+
+  // Handle song end
+  const handleSongEnd = () => {
+    nextSong();
+  };
+
+  // Handle audio errors
+  const handleAudioError = (error: Event) => {
+    console.error("Audio error:", error);
+    setIsPlaying(false);
+    nextSong();
+  };
+
+  // Update progress
+  const updateProgress = () => {
+    if (audioRef.current) {
+      const currentTime = audioRef.current.currentTime;
+      const duration = audioRef.current.duration || 1;
+      setProgress((currentTime / duration) * 100);
+    }
+  };
 
   // Initialize playlist with actual songs
   useEffect(() => {
@@ -107,96 +137,84 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Handle song changes without immediately playing
+  // Handle song changes and auto-play
   useEffect(() => {
     if (audioRef.current && currentSong) {
-      // Important: Load the song without playing it
+      // Remove previous event listeners to avoid duplicates
+      audioRef.current.removeEventListener('ended', handleSongEnd);
+      
       audioRef.current.src = currentSong.file;
       audioRef.current.load();
-      
-      // Reset progress
       setProgress(0);
       
-      // Only play if it's not the initial load or if user has already interacted
-      if (!isInitialLoad.current && isPlaying) {
-        const playPromise = audioRef.current.play();
-        
-        if (playPromise !== undefined) {
-          playPromise.catch(error => {
-            console.error("Error playing audio:", error);
-            setIsPlaying(false);
-          });
-        }
-      }
+      // Re-add the event listener for this song
+      audioRef.current.addEventListener('ended', handleSongEnd);
       
-      isInitialLoad.current = false;
+      // Auto-play on initial load (with user interaction requirement)
+      const handleFirstInteraction = () => {
+        if (isInitialLoad.current) {
+          const playPromise = audioRef.current?.play();
+          
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              setIsPlaying(true);
+            }).catch(error => {
+              console.error("Auto-play was prevented:", error);
+            });
+          }
+          
+          isInitialLoad.current = false;
+          document.removeEventListener('click', handleFirstInteraction);
+          document.removeEventListener('keydown', handleFirstInteraction);
+          document.removeEventListener('touchstart', handleFirstInteraction);
+        }
+      };
+      
+      // Add event listeners for first interaction
+      document.addEventListener('click', handleFirstInteraction);
+      document.addEventListener('keydown', handleFirstInteraction);
+      document.addEventListener('touchstart', handleFirstInteraction);
+      
+      return () => {
+        document.removeEventListener('click', handleFirstInteraction);
+        document.removeEventListener('keydown', handleFirstInteraction);
+        document.removeEventListener('touchstart', handleFirstInteraction);
+      };
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSong]);
 
-  // Add volume control
+  // Volume control
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
     }
   }, [volume]);
 
-  // Add play/pause effect
+  // Play/pause effect
   useEffect(() => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        const playPromise = audioRef.current.play();
-        
-        if (playPromise !== undefined) {
-          playPromise.catch(error => {
-            console.error("Error playing audio:", error);
-            setIsPlaying(false);
-          });
-        }
-      } else {
-        audioRef.current.pause();
+    if (!audioRef.current) return;
+    
+    if (isPlaying) {
+      const playPromise = audioRef.current.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.error("Error playing audio:", error);
+          setIsPlaying(false);
+        });
       }
+    } else {
+      audioRef.current.pause();
     }
   }, [isPlaying]);
 
-  // Handle song end
-  const handleSongEnd = () => {
-    // Stop playing when song ends instead of going to next song
-    setIsPlaying(false);
-  };
-
-  // Handle audio errors
-  const handleAudioError = (error: Event) => {
-    console.error("Audio error:", error);
-    setIsPlaying(false);
-    // Try to play next song if there's an error
-    nextSong();
-  };
-
-  // Update progress
-  const updateProgress = () => {
-    if (audioRef.current) {
-      const currentTime = audioRef.current.currentTime;
-      const duration = audioRef.current.duration || 1;
-      setProgress((currentTime / duration) * 100);
-    }
-  };
-
   const togglePlay = () => {
-    isUserInteracted.current = true;
     setIsPlaying(!isPlaying);
   };
 
   const toggleExpanded = () => {
     setIsExpanded(!isExpanded);
-  };
-
-  const nextSong = () => {
-    if (!playlist.length || !currentSong) return;
-    
-    const currentIndex = playlist.findIndex(song => song.file === currentSong.file);
-    const nextIndex = (currentIndex + 1) % playlist.length;
-    setCurrentSong(playlist[nextIndex]);
   };
 
   const prevSong = () => {
@@ -205,6 +223,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     const currentIndex = playlist.findIndex(song => song.file === currentSong.file);
     const prevIndex = (currentIndex - 1 + playlist.length) % playlist.length;
     setCurrentSong(playlist[prevIndex]);
+    setIsPlaying(true);
   };
 
   return (

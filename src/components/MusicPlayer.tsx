@@ -21,17 +21,9 @@ export default function MusicPlayer() {
   const [isDiskRotating, setIsDiskRotating] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  // Handle disk rotation separately from play state
+  // Handle disk rotation
   useEffect(() => {
-    // Add a small delay to prevent instant rotation state changes
-    if (isPlaying) {
-      const timer = setTimeout(() => {
-        setIsDiskRotating(true);
-      }, 150);
-      return () => clearTimeout(timer);
-    } else {
-      setIsDiskRotating(false);
-    }
+    setIsDiskRotating(isPlaying);
   }, [isPlaying]);
 
   // Client-side only mounting
@@ -56,8 +48,8 @@ export default function MusicPlayer() {
           className="bg-black/80 backdrop-blur-lg border border-white/20 overflow-hidden"
           style={{ borderRadius: isExpanded ? '0.75rem' : '9999px' }}
           animate={{ 
-            width: isExpanded ? 300 : 80, // Increased from 64 to 80
-            height: isExpanded ? 96 : 80   // Increased from 64 to 80
+            width: isExpanded ? 300 : 80,
+            height: isExpanded ? 96 : 80
           }}
           transition={{ 
             type: "spring",
@@ -68,9 +60,9 @@ export default function MusicPlayer() {
           <div className="flex items-center h-full">
             {/* Album Cover */}
             <div 
-              className="relative min-w-[80px] w-20 h-20 cursor-pointer overflow-hidden" // Increased sizes
+              className="relative min-w-[80px] w-20 h-20 cursor-pointer overflow-hidden"
               style={{
-                borderRadius: '9999px' // Always keep it circular
+                borderRadius: '9999px'
               }}
               onClick={toggleExpanded}
             >
@@ -88,15 +80,14 @@ export default function MusicPlayer() {
                   }
                 }}
                 style={{ 
-                  rotateZ: isDiskRotating ? '0deg' : 'none',
-                  borderRadius: '9999px' // Always keep it circular
+                  borderRadius: '9999px'
                 }}
               >
                 <Image
                   src={imageError ? '/music/default-cover.jpg' : currentSong.cover}
                   alt={currentSong.title}
                   fill
-                  className="object-cover rounded-full" // Always keep it circular
+                  className="object-cover rounded-full"
                   priority
                   onError={() => setImageError(true)}
                 />
