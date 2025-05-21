@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
+import SignInModal from './SignInModal';
+import RegisterModal from './RegisterModal';
 
 // Move nav items outside component to avoid re-creation on every render
 const NAV_ITEMS = [
@@ -82,6 +84,8 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(true); // State for theme
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const pathname = usePathname();
   const { data: session, status } = useSession();
   
@@ -168,6 +172,22 @@ export default function Navbar() {
     document.documentElement.setAttribute('data-theme', newThemeState ? 'dark' : 'light');
     localStorage.setItem('theme', newThemeState ? 'dark' : 'light');
   }, [isDarkMode]);
+
+  const handleSignInClick = () => {
+    setIsSignInModalOpen(true);
+    setMobileMenuOpen(false);
+  };
+
+  const handleRegisterClick = () => {
+    setIsRegisterModalOpen(true);
+    setIsSignInModalOpen(false);
+    setMobileMenuOpen(false);
+  };
+
+  const handleSignInFromRegister = () => {
+    setIsRegisterModalOpen(false);
+    setIsSignInModalOpen(true);
+  };
 
   // Dynamic styles based on theme
   const locationBgClass = isDarkMode ? 'bg-gray-900/40' : 'bg-white/60';
@@ -296,12 +316,12 @@ export default function Navbar() {
                   </button>
                 </div>
               ) : (
-                <Link
-                  href="/auth/signin"
+                <button
+                  onClick={handleSignInClick}
                   className={`px-4 py-1.5 ${menuBgClass} ${menuTextClass} rounded-full transition-colors hover:bg-blue-500/20`}
                 >
                   Sign In
-                </Link>
+                </button>
               )}
             </div>
 
@@ -448,12 +468,14 @@ export default function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <Link
-                  href="/auth/signin"
-                  className={`block w-full p-3 rounded-full ${menuBgClass} ${menuTextClass} text-center transition-colors hover:bg-blue-500/20`}
+                <motion.button
+                  className={`w-full p-3 mb-3 rounded-full bg-blue-500 text-white transition-colors`}
+                  onClick={handleSignInClick}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   Sign In
-                </Link>
+                </motion.button>
               </motion.div>
             )}
 
@@ -499,6 +521,18 @@ export default function Navbar() {
           </motion.div>
         </div>
       )}
+
+      <SignInModal 
+        isOpen={isSignInModalOpen}
+        onClose={() => setIsSignInModalOpen(false)}
+        onRegisterClick={handleRegisterClick}
+      />
+
+      <RegisterModal
+        isOpen={isRegisterModalOpen}
+        onClose={() => setIsRegisterModalOpen(false)}
+        onSignInClick={handleSignInFromRegister}
+      />
     </>
   );
 }

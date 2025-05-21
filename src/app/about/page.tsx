@@ -7,6 +7,8 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import ProfileSection from '@/components/ProfileSection';
 import BioSection from '@/components/BioSection';
 import SkillsSection from '@/components/SkillSection';
+import ProgrammingSkills from '@/components/ProgrammingSkills';
+import EducationSection from '@/components/EducationSection';
 import PageTransition from '@/components/PageTransition';
 
 export default function About() {
@@ -76,6 +78,10 @@ export default function About() {
           />
           
           <SkillsSection />
+          
+          <ProgrammingSkills />
+          
+          <EducationSection />
         </div>
       </div>
     </PageTransition>

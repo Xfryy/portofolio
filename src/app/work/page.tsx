@@ -23,11 +23,31 @@ export default function Work() {
       title: 'Gaza youth Website',
       description: 'Travel discovery app with personalized recommendations',
       image: '/projects/Gaza.png',
-      category: 'Mobile App',
-      year: '2022',
+      category: 'Web pages',
+      year: '2025',
       tags: ['React', 'TypeScript', 'Tailwind CSS', 'MongoDb', 'Next.js', 'Claudinary'],
       featured: true
-    }
+    },
+        {
+      id: 'AkademikTih',
+      title: 'AkademikTih Website',
+      description: 'A school management system with user-friendly interface',
+      image: '/projects/AkademikTih.png',
+      category: 'Web pages',
+      year: '2024',
+      tags: ['Php', 'Html','Css', 'MySQL', 'Bootstrap' ,'JavaScript', 'Jquery'],
+      featured: true
+    },
+            {
+      id: 'Spotifyz',
+      title: 'Spotify Clone',
+      description: 'A Spotify clone with a focus on music discovery and playlist management',
+      image: '/projects/Spotifyz.png',
+      category: 'Web music app',
+      year: '2025',
+      tags: ['Vite', 'TypeScript', 'Tailwind CSS', 'MongoDb', 'Ai-Bot', 'Claudinary', 'JavaScript'],
+      featured: true
+    },
   ];
 
   return (

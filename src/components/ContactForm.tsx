@@ -27,7 +27,12 @@ export default function ContactForm() {
 
   return (
     <motion.div
-      className="max-w-3xl mx-auto bg-white dark:bg-gray-900/40 p-8 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm"
+      className="max-w-3xl mx-auto p-8 rounded-xl border shadow-sm"
+      style={{
+        backgroundColor: 'var(--card-bg)',
+        borderColor: 'var(--card-border)',
+        color: 'var(--text-primary)',
+      }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
@@ -35,53 +40,77 @@ export default function ContactForm() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Your Name</label>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Your Name</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-900 dark:text-white"
+              className="w-full px-4 py-3 rounded-lg border focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
+              style={{
+                backgroundColor: 'var(--card-bg)',
+                borderColor: 'var(--card-border)',
+                color: 'var(--text-primary)',
+              }}
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Your Email</label>
+            <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Your Email</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-900 dark:text-white"
+              className="w-full px-4 py-3 rounded-lg border focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
+              style={{
+                backgroundColor: 'var(--card-bg)',
+                borderColor: 'var(--card-border)',
+                color: 'var(--text-primary)',
+              }}
               required
             />
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Subject</label>
+          <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Subject</label>
           <input
             type="text"
             name="subject"
             value={formData.subject}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-900 dark:text-white"
+            className="w-full px-4 py-3 rounded-lg border focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
+            style={{
+              backgroundColor: 'var(--card-bg)',
+              borderColor: 'var(--card-border)',
+              color: 'var(--text-primary)',
+            }}
             required
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Message</label>
+          <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-primary)' }}>Message</label>
           <textarea
             rows={6}
             name="message"
             value={formData.message}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-900 dark:text-white"
+            className="w-full px-4 py-3 rounded-lg border focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
+            style={{
+              backgroundColor: 'var(--card-bg)',
+              borderColor: 'var(--card-border)',
+              color: 'var(--text-primary)',
+            }}
             required
           ></textarea>
         </div>
         <motion.button
           type="submit"
-          className="w-full px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md"
+          className="w-full px-8 py-4 text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md"
+          style={{
+            backgroundColor: 'var(--button-primary-bg)',
+            color: 'var(--button-primary-text)',
+          }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >

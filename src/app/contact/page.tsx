@@ -15,8 +15,8 @@ export default function Contact() {
         </svg>
       ),
       title: "Phone",
-      value: "+62 812 3456 7890",
-      href: "tel:+6281234567890"
+      value: "+62 852-1876-3242",
+      href: "tel:+6285218763242"
     },
     {
       icon: (
@@ -26,8 +26,8 @@ export default function Contact() {
         </svg>
       ),
       title: "Email",
-      value: "contact@faatih.dev",
-      href: "mailto:contact@faatih.dev"
+      value: "Faricandra5@gmail.com",
+      href: "mailto:Faricandra5@gmail.com"
     },
     {
       icon: (
@@ -53,8 +53,8 @@ export default function Contact() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">Get in Touch</h1>
-            <p className="text-lg text-gray-700 dark:text-gray-400 max-w-2xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: 'var(--text-primary)' }}>Get in Touch</h1>
+            <p className="text-lg max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
               I`m always open to discussing new projects, creative ideas, or opportunities to be part of your visions.
             </p>
           </motion.div>

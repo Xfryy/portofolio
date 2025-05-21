@@ -17,13 +17,13 @@ export default function Gallery() {
       alt: "Team Project - Class Meet School", 
       category: 'team',
       description: "Working with the Osister team on Class Meet School project"
+    },    { 
+      src: "/Gallery/Faatih.jpg", 
+      alt: "With Faatih and Bayu", 
+      category: 'events',
+      description: "Photo with Faatih and Bayu"
     },
-    { 
-      src: "/Gallery/AkademikTih.png", 
-      alt: "Project AkademikTih", 
-      category: 'projects',
-      description: "School project for managing academic activities"
-    },
+
     // Add more images with their categories
   ];
 

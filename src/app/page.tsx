@@ -32,9 +32,9 @@ export default function Home() {
           </div>
 
           {/* Additional content section */}
-          <div className="mt-24 border-t border-gray-300 dark:border-gray-800 pt-12">
+          <div className="mt-24 border-t border-themed pt-12">
             <motion.h2 
-              className="flex items-center gap-4 text-2xl md:text-3xl mb-8 text-gray-900 dark:text-white"
+              className="flex items-center gap-4 text-2xl md:text-3xl mb-8 text-primary"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
@@ -63,15 +63,20 @@ export default function Home() {
               ].map((item, index) => (
                 <motion.div
                   key={index}
-                  className="bg-white/30 dark:bg-gray-900/40 p-6 rounded-xl border border-gray-300 dark:border-gray-800 hover:border-blue-500 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10"
+                  className="rounded-xl p-6 border transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-500"
+                  style={{
+                    backgroundColor: 'var(--card-bg)',
+                    borderColor: 'var(--card-border)',
+                    color: 'var(--text-primary)',
+                  }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   whileHover={{ y: -5 }}
                 >
                   <div className="text-3xl mb-4">{item.icon}</div>
-                  <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                  <p className="text-gray-600 dark:text-gray-400">{item.description}</p>
+                  <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{item.title}</h3>
+                  <p style={{ color: 'var(--text-secondary)' }}>{item.description}</p>
                 </motion.div>
               ))}
             </div>
