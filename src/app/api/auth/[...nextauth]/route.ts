@@ -11,7 +11,7 @@ import { compare } from 'bcryptjs';
 import User from '@/models/User';
 import dbConnect from '@/lib/mongodb';
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,

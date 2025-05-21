@@ -104,6 +104,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
         audioRef.current.pause();
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Handle song changes without immediately playing
@@ -130,6 +131,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
       
       isInitialLoad.current = false;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSong]);
 
   // Add volume control
