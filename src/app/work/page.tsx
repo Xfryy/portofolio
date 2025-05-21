@@ -9,44 +9,24 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 export default function Work() {
   const projects = [
     {
-      id: 'once-ui',
-      title: 'Once UI',
+      id: 'Abey-homey',
+      title: 'Abey Homey Website',
       description: 'A modern React component library built with Tailwind CSS',
-      image: '/projects/once-ui.jpg',
-      category: 'Design System',
-      year: '2023',
-      tags: ['React', 'TypeScript', 'Tailwind CSS'],
+      image: '/projects/abey.png',
+      category: 'Web Pages',
+      year: '2025',
+      tags: ['React', 'TypeScript', 'Tailwind CSS','MongoDb','Next.js', 'Claudinary'],
       featured: true
     },
     {
-      id: 'travel-app',
-      title: 'Wanderlust',
+      id: 'Gaza-youth',
+      title: 'Gaza youth Website',
       description: 'Travel discovery app with personalized recommendations',
-      image: '/projects/travel-app.jpg',
+      image: '/projects/Gaza.png',
       category: 'Mobile App',
       year: '2022',
-      tags: ['React Native', 'Firebase', 'Maps API'],
+      tags: ['React', 'TypeScript', 'Tailwind CSS', 'MongoDb', 'Next.js', 'Claudinary'],
       featured: true
-    },
-    {
-      id: 'food-delivery',
-      title: 'FoodFast',
-      description: "Food delivery platform with real-time order tracking",
-      image: '/projects/project-food.jpg',
-      category: 'Web Platform',
-      year: '2022',
-      tags: ['Next.js', 'Node.js', 'MongoDB'],
-      featured: false
-    },
-    {
-      id: 'fitness-tracker',
-      title: 'FitPal',
-      description: 'Fitness tracking app with personalized workout plans',
-      image: '/projects/project-fitness.jpg',
-      category: 'Mobile App',
-      year: '2021',
-      tags: ['Flutter', 'Firebase', 'HealthKit'],
-      featured: false
     }
   ];
 

@@ -60,7 +60,7 @@ export default function AnimatedBackground() {
 
       {/* Grid Pattern */}
       <div 
-        className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-5"
+        className="absolute inset-0  bg-center opacity-5"
         style={{
           maskImage: 'linear-gradient(to bottom, transparent, black, transparent)',
           WebkitMaskImage: 'linear-gradient(to bottom, transparent, black, transparent)',

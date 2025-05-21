@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useSession, signOut } from 'next-auth/react';
 
 // Move nav items outside component to avoid re-creation on every render
 const NAV_ITEMS = [
@@ -82,6 +83,7 @@ export default function Navbar() {
   const [currentTime, setCurrentTime] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(true); // State for theme
   const pathname = usePathname();
+  const { data: session, status } = useSession();
   
   // Improved scroll handler using requestAnimationFrame
   useEffect(() => {
@@ -273,6 +275,36 @@ export default function Navbar() {
               </Link>
             ))}
 
+            {/* Auth buttons and user profile */}
+            <div className="hidden md:flex items-center gap-2 ml-2">
+              {status === 'authenticated' && session?.user ? (
+                <div className="flex items-center gap-2">
+                  {session.user.image && (
+                    <Image
+                      src={session.user.image}
+                      alt="Profile"
+                      width={32}
+                      height={32}
+                      className="rounded-full"
+                    />
+                  )}
+                  <button
+                    onClick={() => signOut()}
+                    className={`px-4 py-1.5 ${menuBgClass} ${menuTextClass} rounded-full transition-colors hover:bg-red-500/20`}
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/auth/signin"
+                  className={`px-4 py-1.5 ${menuBgClass} ${menuTextClass} rounded-full transition-colors hover:bg-blue-500/20`}
+                >
+                  Sign In
+                </Link>
+              )}
+            </div>
+
             {/* Light/Dark Mode Toggle Button */}
             <motion.button
               className={`hidden md:flex px-4 py-1.5 ${menuBgClass} ${menuTextClass} rounded-full transition-colors duration-300 items-center gap-2 ml-2`}
@@ -377,6 +409,53 @@ export default function Navbar() {
                 </motion.div>
               ))}
             </div>
+
+            {/* Add auth buttons to mobile menu */}
+            {status === 'authenticated' && session?.user ? (
+              <motion.div 
+                className="p-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  {session.user.image && (
+                    <Image
+                      src={session.user.image}
+                      alt="Profile"
+                      width={40}
+                      height={40}
+                      className="rounded-full"
+                    />
+                  )}
+                  <span className={isDarkMode ? 'text-white' : 'text-gray-900'}>
+                    {session.user.name}
+                  </span>
+                </div>
+                <motion.button
+                  className={`w-full p-3 rounded-full bg-red-500/20 text-red-500 transition-colors`}
+                  onClick={() => signOut()}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Sign Out
+                </motion.button>
+              </motion.div>
+            ) : (
+              <motion.div 
+                className="p-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <Link
+                  href="/auth/signin"
+                  className={`block w-full p-3 rounded-full ${menuBgClass} ${menuTextClass} text-center transition-colors hover:bg-blue-500/20`}
+                >
+                  Sign In
+                </Link>
+              </motion.div>
+            )}
 
             {/* Theme toggle with enhanced animation */}
             <motion.div 

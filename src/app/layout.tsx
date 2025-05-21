@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { ThemeProvider } from "next-themes";
 import { MusicPlayerProvider } from '@/context/MusicPlayerContext';
 import MusicPlayer from '@/components/MusicPlayer';
+import { AuthProvider } from '@/components/AuthProvider';
 
 const geist = Geist({
   subsets: ['latin'],
@@ -28,27 +29,29 @@ export default function RootLayout({
   return (
     <html lang="en" className={geist.className} suppressHydrationWarning>
       <body className="min-h-screen overflow-x-hidden">
-        <ThemeProvider attribute="data-theme" defaultTheme="dark" enableSystem>
-          <MusicPlayerProvider>
-            {/* Enhanced background gradients with better mobile performance */}
-            <div className="fixed inset-0 z-0">
-              <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-radial from-blue-900/20 via-blue-900/10 to-transparent opacity-20 blur-3xl transform-gpu"></div>
-              <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-gradient-radial from-purple-900/20 via-purple-900/10 to-transparent opacity-20 blur-3xl transform-gpu"></div>
-              <div className="absolute top-1/3 left-1/4 w-1/3 h-1/3 bg-gradient-radial from-cyan-900/20 via-cyan-900/10 to-transparent opacity-10 blur-3xl transform-gpu"></div>
-            </div>
-            <div className="fixed inset-0 z-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(to_bottom,transparent,black,transparent)] opacity-5"></div>
-            
-            {/* Changed to relative positioning for better transitions */}
-            <div className="relative flex flex-col min-h-screen">
-              <Navbar />
-              <main className="flex-grow container mx-auto px-4 pt-20 relative z-10">
-                {children}
-              </main>
-              <Footer />
-            </div>
-            <MusicPlayer />
-          </MusicPlayerProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider attribute="data-theme" defaultTheme="dark" enableSystem>
+            <MusicPlayerProvider>
+              {/* Enhanced background gradients with better mobile performance */}
+              <div className="fixed inset-0 z-0">
+                <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-radial from-blue-900/20 via-blue-900/10 to-transparent opacity-20 blur-3xl transform-gpu"></div>
+                <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-gradient-radial from-purple-900/20 via-purple-900/10 to-transparent opacity-20 blur-3xl transform-gpu"></div>
+                <div className="absolute top-1/3 left-1/4 w-1/3 h-1/3 bg-gradient-radial from-cyan-900/20 via-cyan-900/10 to-transparent opacity-10 blur-3xl transform-gpu"></div>
+              </div>
+              <div className="fixed inset-0 z-0  bg-center [mask-image:linear-gradient(to_bottom,transparent,black,transparent)] opacity-5"></div>
+              
+              {/* Changed to relative positioning for better transitions */}
+              <div className="relative flex flex-col min-h-screen">
+                <Navbar />
+                <main className="flex-grow container mx-auto px-4 pt-20 relative z-10">
+                  {children}
+                </main>
+                <Footer />
+              </div>
+              <MusicPlayer />
+            </MusicPlayerProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

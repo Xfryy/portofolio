@@ -56,7 +56,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
               title: "did i tell u that i miss u",
               artist: "adore",
               cover: "/music/covers/miss-u.jpg",
-              file: "/music/SpotiDownloader.com - did i tell u that i miss u - slowed - adore.mp3",
+              file: "/music/SpotiDownloader.com - did i tell u that i miss u - adore.mp3",
               duration: 180
             },
             {

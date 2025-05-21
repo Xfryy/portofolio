@@ -3,21 +3,10 @@
 import { motion } from 'framer-motion';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import PageTransition from '@/components/PageTransition';
-import { useState } from 'react';
+import ContactInfo from '@/components/ContactInfo';
+import ContactForm from '@/components/ContactForm';
 
 export default function Contact() {
-  const [, ] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Add your form submission logic here
-  };
-
   const contactInfo = [
     {
       icon: (
@@ -70,77 +59,8 @@ export default function Contact() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            {contactInfo.map((item, index) => (
-              <motion.a
-                key={index}
-                href={item.href}
-                className="p-6 text-center bg-white dark:bg-gray-900/40 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-              >
-                <div className="inline-block p-3 bg-blue-100 dark:bg-blue-500/10 rounded-full text-blue-600 dark:text-blue-400 mb-4">
-                  {item.icon}
-                </div>
-                <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">{item.title}</h3>
-                <p className="text-gray-700 dark:text-gray-400">{item.value}</p>
-              </motion.a>
-            ))}
-          </div>
-
-          <motion.div
-            className="max-w-3xl mx-auto bg-white dark:bg-gray-900/40 p-8 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Your Name</label>
-                  <input
-                    type="text"
-                    className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-900 dark:text-white"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Your Email</label>
-                  <input
-                    type="email"
-                    className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-900 dark:text-white"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Subject</label>
-                <input
-                  type="text"
-                  className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-900 dark:text-white"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">Message</label>
-                <textarea
-                  rows={6}
-                  className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 text-gray-900 dark:text-white"
-                  required
-                ></textarea>
-              </div>
-              <motion.button
-                type="submit"
-                className="w-full px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-300 shadow-sm hover:shadow-md"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Send Message
-              </motion.button>
-            </form>
-          </motion.div>
+          <ContactInfo contactInfo={contactInfo} />
+          <ContactForm />
         </div>
       </div>
     </PageTransition>
