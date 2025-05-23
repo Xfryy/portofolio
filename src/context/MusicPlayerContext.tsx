@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
@@ -134,6 +135,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
         audioRef.current.pause();
       }
     };
+
   }, []);
 
   // Handle song changes and auto-play

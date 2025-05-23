@@ -1,28 +1,38 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import Hero from '@/components/hero';
 import FeaturedProject from '@/components/FeaturedProject';
 import PageTransition from '@/components/PageTransition';
 
-// Dynamic import for Spline to improve performance
-const Spline = dynamic(() => import('@splinetool/react-spline'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-[600px] flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto mb-4"></div>
-        <p className="text-gray-500">Loading 3D Scene...</p>
-      </div>
+// Loading component for Spline
+const SplineLoading = () => (
+  <div className="w-full h-[600px] flex items-center justify-center">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto mb-4"></div>
+      <p className="text-gray-500">Loading 3D Scene...</p>
     </div>
-  )
+  </div>
+);
+
+// Dynamic import for SplineComponent
+const Spline = dynamic(() => import('@/components/SplineComponent'), {
+  ssr: false,
+  loading: SplineLoading
 });
 
-export default function Home() {
-  const [splineLoaded, setSplineLoaded] = useState(false);
+export default function Home() {  const [splineError, setSplineError] = useState(false);
+
+  const handleSplineLoad = () => {
+    setSplineError(false);
+  };
+
+  const handleSplineError = () => {
+    setSplineError(true);
+  };
 
   return (
     <PageTransition>
@@ -52,22 +62,32 @@ export default function Home() {
             >
             </motion.h2>
             
-            <div className="relative rounded-2xl overflow-hidden  backdrop-blur-sm">
+            <div className="relative rounded-2xl overflow-hidden backdrop-blur-sm">
               <div className="w-full h-[600px] md:h-[700px]">
-                <Spline
-                  scene="https://prod.spline.design/RFm0kAGZX32ecRBz/scene.splinecode"
-                  onLoad={() => setSplineLoaded(true)}
-                />
-                
-                {/* Loading overlay */}
-                {!splineLoaded && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-                    <div className="text-center">
-                      <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                      <p className="text-gray-500">Loading 3D Scene...</p>
+                <Suspense fallback={<SplineLoading />}>
+                  {!splineError ? (
+                    <Spline
+                      scene="https://prod.spline.design/RFm0kAGZX32ecRBz/scene.splinecode"
+                      onLoad={handleSplineLoad}
+                      onError={handleSplineError}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl">
+                      <div className="text-center">
+                        <div className="text-6xl mb-4">🎨</div>
+                        <p className="text-gray-600 dark:text-gray-400">3D Scene temporarily unavailable</p>
+                        <button 
+                          onClick={() => setSplineError(false)}
+                          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                        >
+                          Retry
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </Suspense>
+                
+                
               </div>
               
               {/* Overlay gradient for better integration */}
