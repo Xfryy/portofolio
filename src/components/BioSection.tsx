@@ -69,7 +69,7 @@ export default function BioSection({ bio }: BioSectionProps) {
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold mb-1 text-gray-500 dark:text-gray-400">Website</h4>
-                  <p className="text-sm">www.faatih.dev</p>
+                  <p className="text-sm">https://portofolio-pi-rouge.vercel.app/</p>
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold mb-1 text-gray-500 dark:text-gray-400">Freelance</h4>

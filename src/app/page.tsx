@@ -1,12 +1,29 @@
 "use client";
 
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import Hero from '@/components/hero';
 import FeaturedProject from '@/components/FeaturedProject';
 import PageTransition from '@/components/PageTransition';
 
+// Dynamic import for Spline to improve performance
+const Spline = dynamic(() => import('@splinetool/react-spline'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[600px] flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mx-auto mb-4"></div>
+        <p className="text-gray-500">Loading 3D Scene...</p>
+      </div>
+    </div>
+  )
+});
+
 export default function Home() {
+  const [splineLoaded, setSplineLoaded] = useState(false);
+
   return (
     <PageTransition>
       <AnimatedBackground />
@@ -20,6 +37,53 @@ export default function Home() {
             showProfile={true}
           />
 
+          {/* 3D Spline Scene Section */}
+          <motion.div 
+            className="mt-24 mb-24"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <motion.h2 
+              className="flex items-center gap-4 text-2xl md:text-3xl mb-8 text-primary"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+            </motion.h2>
+            
+            <div className="relative rounded-2xl overflow-hidden  backdrop-blur-sm">
+              <div className="w-full h-[600px] md:h-[700px]">
+                <Spline
+                  scene="https://prod.spline.design/RFm0kAGZX32ecRBz/scene.splinecode"
+                  onLoad={() => setSplineLoaded(true)}
+                />
+                
+                {/* Loading overlay */}
+                {!splineLoaded && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                      <p className="text-gray-500">Loading 3D Scene...</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* Overlay gradient for better integration */}
+              <div className="absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-transparent pointer-events-none"></div>
+            </div>
+            
+            <motion.p 
+              className="text-center mt-6 text-secondary max-w-2xl mx-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+            >
+              Interact with the 3D scene above - drag to rotate, scroll to zoom, and explore the immersive experience.
+            </motion.p>
+          </motion.div>
+
           {/* Featured Project */}
           <div className="mt-24">
             <FeaturedProject 
@@ -27,11 +91,11 @@ export default function Home() {
               description="A modern portfolio built with Next.js featuring server-side rendering, dynamic routing, and optimized performance. This project showcases my ability to create fast, SEO-friendly web applications."
               projectUrl="/work/nextjs"
               role="Fullstack Developer & Designer"
-              technologies={['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Framer Motion']}
+              technologies={['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Spline 3D']}
             />
           </div>
 
-          {/* Additional content section */}
+          {/* What I Do Section */}
           <div className="mt-24 border-t border-themed pt-12">
             <motion.h2 
               className="flex items-center gap-4 text-2xl md:text-3xl mb-8 text-primary"
@@ -51,8 +115,8 @@ export default function Home() {
                   icon: "💻"
                 },
                 {
-                  title: "UI/UX Design",
-                  description: "Creating intuitive user interfaces with thoughtful user experience principles.",
+                  title: "3D & Interactive Design",
+                  description: "Creating immersive 3D experiences and interactive elements that engage users.",
                   icon: "🎨"
                 },
                 {

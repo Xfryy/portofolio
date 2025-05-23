@@ -134,7 +134,6 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
         audioRef.current.pause();
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Handle song changes and auto-play
@@ -149,6 +148,17 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
       
       // Re-add the event listener for this song
       audioRef.current.addEventListener('ended', handleSongEnd);
+      
+      // If we're supposed to be playing, ensure we play the new song
+      if (isPlaying) {
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.error("Error playing new song:", error);
+            setIsPlaying(false);
+          });
+        }
+      }
       
       // Auto-play on initial load (with user interaction requirement)
       const handleFirstInteraction = () => {
@@ -181,8 +191,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
         document.removeEventListener('touchstart', handleFirstInteraction);
       };
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSong]);
+  }, [currentSong, isPlaying]);
 
   // Volume control
   useEffect(() => {
@@ -193,7 +202,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
 
   // Play/pause effect
   useEffect(() => {
-    if (!audioRef.current) return;
+    if (!audioRef.current || !currentSong) return;
     
     if (isPlaying) {
       const playPromise = audioRef.current.play();
@@ -207,7 +216,7 @@ export function MusicPlayerProvider({ children }: { children: React.ReactNode })
     } else {
       audioRef.current.pause();
     }
-  }, [isPlaying]);
+  }, [isPlaying, currentSong]);
 
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
