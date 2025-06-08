@@ -11,6 +11,8 @@ import ProgrammingSkills from '@/components/ProgrammingSkills';
 import EducationSection from '@/components/EducationSection';
 import CommentSection from '@/components/CommentSection';
 import PageTransition from '@/components/PageTransition';
+import GitHubActivity from '@/components/GitHubActivity';
+import Workspace from '@/components/Workspace';
 
 export default function About() {
   const [isProfileExpanded, setIsProfileExpanded] = useState(false);
@@ -18,7 +20,7 @@ export default function About() {
   // Listen to profile expansion state
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleProfileExpand = (expanded: boolean) => {
-    setIsProfileExpanded(expanded);
+    setIsProfileExpanded(expanded); 
   };
 
   return (
@@ -78,9 +80,13 @@ export default function About() {
             bio="My Name is Muhammad Faatih I lived in Bekasi-based design engineer with a passion for transforming complex challenges into simple, elegant design solutions. My work spans digital interfaces, interactive experiences, and the convergence of design and technology."
           />
           
+          <Workspace />
+          
           <SkillsSection />
           
           <ProgrammingSkills />
+          
+          <GitHubActivity />
           
           <EducationSection />
           
