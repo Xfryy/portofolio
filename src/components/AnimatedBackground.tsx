@@ -20,18 +20,18 @@ export default function AnimatedBackground() {
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
       {/* Gradient Orbs */}
       <motion.div
-        className="absolute inset-0"
+        className="absolute inset-0 overflow-hidden"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        {/* Enhanced gradient elements */}
-        <div className="absolute top-0 -left-20 w-96 h-96 bg-gradient-radial from-blue-900/20 via-blue-900/10 to-transparent opacity-20 blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-purple-900/20 via-purple-900/10 to-transparent opacity-20 blur-3xl"></div>
-        <div className="absolute top-1/3 left-1/4 w-64 h-64 bg-gradient-radial from-cyan-900/20 via-cyan-900/10 to-transparent opacity-10 blur-3xl"></div>
+        {/* Enhanced gradient elements with contained positioning */}
+        <div className="absolute top-0 left-0 w-[40vw] h-[40vw] max-w-2xl max-h-2xl bg-gradient-radial from-blue-900/20 via-blue-900/10 to-transparent opacity-20 blur-3xl transform-gpu"></div>
+        <div className="absolute bottom-0 right-0 w-[40vw] h-[40vw] max-w-2xl max-h-2xl bg-gradient-radial from-purple-900/20 via-purple-900/10 to-transparent opacity-20 blur-3xl transform-gpu"></div>
+        <div className="absolute top-1/3 left-1/4 w-[30vw] h-[30vw] max-w-xl max-h-xl bg-gradient-radial from-cyan-900/20 via-cyan-900/10 to-transparent opacity-10 blur-3xl transform-gpu"></div>
       </motion.div>
 
-      {/* Animated Particles */}
+      {/* Animated Particles with contained positioning */}
       {[...Array(6)].map((_, i) => (
         <motion.div
           key={i}
@@ -39,8 +39,8 @@ export default function AnimatedBackground() {
             isDark ? 'bg-white' : 'bg-black'
           }`}
           style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 90 + 5}%`,
+            left: `${Math.random() * 90 + 5}%`,
             opacity: 0.2,
           }}
           animate={{

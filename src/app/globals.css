@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Base HTML and Body styles */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
 :root {
   --background: #0A0D11;
   --foreground: #ededed;

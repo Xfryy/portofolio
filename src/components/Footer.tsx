@@ -42,8 +42,7 @@ export default function Footer() {
                   className="rounded-full object-cover"
                 />
               </motion.div>
-              {/* Fixed the color to adapt to both light and dark mode */}
-              <span className="text-blue-600 dark:text-white">Faatih</span>
+              <span style={{ color: 'var(--text-primary)' }}>Faatih</span>
             </Link>
             <p className="text-gray-400 mb-4" style={{ color: 'var(--text-secondary)' }}>
               Building beautiful digital experiences with code and creativity.

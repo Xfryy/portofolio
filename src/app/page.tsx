@@ -1,12 +1,13 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import Hero from '@/components/hero';
 import FeaturedProject from '@/components/FeaturedProject';
 import PageTransition from '@/components/PageTransition';
+import ChatWidget from '@/components/ChatWidget';
 
 // Loading component for Spline
 const SplineLoading = () => (
@@ -24,20 +25,24 @@ const Spline = dynamic(() => import('@/components/SplineComponent'), {
   loading: SplineLoading
 });
 
-export default function Home() {  const [splineError, setSplineError] = useState(false);
+export default function Home() {
+  const [splineError, setSplineError] = useState(false);
+  const [showSpline, setShowSpline] = useState(false);
 
-  const handleSplineLoad = () => {
-    setSplineError(false);
-  };
+  const handleSplineLoad = () => setSplineError(false);
+  const handleSplineError = () => setSplineError(true);
 
-  const handleSplineError = () => {
-    setSplineError(true);
-  };
+  useEffect(() => {
+    if (!showSpline) {
+      setSplineError(false);
+    }
+  }, [showSpline]);
 
   return (
     <PageTransition>
       <AnimatedBackground />
-      <div className="py-12 md:py-24">
+      <ChatWidget />
+      <div className="w-full">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
           <Hero 
@@ -47,62 +52,53 @@ export default function Home() {  const [splineError, setSplineError] = useState
             showProfile={true}
           />
 
-          {/* 3D Spline Scene Section */}
-          <motion.div 
-            className="mt-24 mb-24"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
-            <motion.h2 
-              className="flex items-center gap-4 text-2xl md:text-3xl mb-8 text-primary"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
+          {/* Button to toggle Spline */}
+          <div className="flex justify-center mt-12 mb-6">
+            <button
+              onClick={() => setShowSpline(prev => !prev)}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-            </motion.h2>
-            
-            <div className="relative rounded-2xl overflow-hidden backdrop-blur-sm">
-              <div className="w-full h-[600px] md:h-[700px]">
-                <Suspense fallback={<SplineLoading />}>
-                  {!splineError ? (
-                    <Spline
-                      scene="https://prod.spline.design/RFm0kAGZX32ecRBz/scene.splinecode"
-                      onLoad={handleSplineLoad}
-                      onError={handleSplineError}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl">
-                      <div className="text-center">
-                        <div className="text-6xl mb-4">🎨</div>
-                        <p className="text-gray-600 dark:text-gray-400">3D Scene temporarily unavailable</p>
-                        <button 
-                          onClick={() => setSplineError(false)}
-                          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                        >
-                          Retry
-                        </button>
+              {showSpline ? 'Hide 3D Scene' : 'Show 3D Scene'}
+            </button>
+          </div>
+
+          {/* Spline Scene Section */}
+          {showSpline && (
+            <motion.div 
+              className="mt-6 mb-24 w-full"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+            >
+              <div className="relative rounded-2xl overflow-hidden backdrop-blur-sm w-full">
+                <div className="w-full h-[600px] md:h-[700px]">
+                  <Suspense fallback={<SplineLoading />}>
+                    {!splineError ? (
+                      <Spline
+                        scene="https://prod.spline.design/RFm0kAGZX32ecRBz/scene.splinecode"
+                        onLoad={handleSplineLoad}
+                        onError={handleSplineError}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-xl">
+                        <div className="text-center">
+                          <div className="text-6xl mb-4">🎨</div>
+                          <p className="text-gray-600 dark:text-gray-400">3D Scene temporarily unavailable</p>
+                          <button 
+                            onClick={() => setSplineError(false)}
+                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                          >
+                            Retry
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </Suspense>
-                
-                
+                    )}
+                  </Suspense>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-transparent pointer-events-none"></div>
               </div>
-              
-              {/* Overlay gradient for better integration */}
-              <div className="absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-transparent pointer-events-none"></div>
-            </div>
-            
-            <motion.p 
-              className="text-center mt-6 text-secondary max-w-2xl mx-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.8 }}
-            >
-              Interact with the 3D scene above - drag to rotate, scroll to zoom, and explore the immersive experience.
-            </motion.p>
-          </motion.div>
+            </motion.div>
+          )}
 
           {/* Featured Project */}
           <div className="mt-24">
@@ -159,8 +155,8 @@ export default function Home() {  const [splineError, setSplineError] = useState
                   whileHover={{ y: -5 }}
                 >
                   <div className="text-3xl mb-4">{item.icon}</div>
-                  <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{item.title}</h3>
-                  <p style={{ color: 'var(--text-secondary)' }}>{item.description}</p>
+                  <h3 className="text-xl font-bold mb-2">{item.title}</h3>
+                  <p>{item.description}</p>
                 </motion.div>
               ))}
             </div>

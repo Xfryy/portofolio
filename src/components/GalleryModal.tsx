@@ -28,17 +28,18 @@ export default function GalleryModal({ src, alt, onClose }: GalleryModalProps) {
           animate={{ scale: 1 }}
           exit={{ scale: 0.9 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        >
-          <Image
-            src={src}
-            alt={alt}
-            width={1920}
-            height={1080}
-            className="object-contain w-full h-full"
-            priority
-            unoptimized
-            loading="eager"
-          />
+        >          <div className="relative w-full h-full max-h-[90vh] flex items-center justify-center">
+            <Image
+              src={src}
+              alt={alt}
+              width={1920}
+              height={1080}
+              className="max-w-full max-h-[90vh] object-contain"
+              priority
+              unoptimized
+              loading="eager"
+            />
+          </div>
           <button
             onClick={(e) => {
               e.stopPropagation();

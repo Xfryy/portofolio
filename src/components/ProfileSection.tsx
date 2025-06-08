@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { FaGithub, FaLinkedin, FaTwitter, FaDribbble } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaInstagram, FaFacebook } from 'react-icons/fa';
 
 interface ProfileSectionProps {
   name: string;
@@ -29,12 +29,11 @@ export default function ProfileSection({ name, role, location, imageUrl, onExpan
     setIsExpanded(newState);
     onExpand?.(newState);
   };
-
   const socialLinks = [
-    { icon: <FaGithub size={20} />, url: 'https://github.com/faatih' },
-    { icon: <FaLinkedin size={20} />, url: 'https://linkedin.com/in/faatih' },
-    { icon: <FaTwitter size={20} />, url: 'https://twitter.com/faatih' },
-    { icon: <FaDribbble size={20} />, url: 'https://dribbble.com/faatih' }
+    { icon: <FaGithub size={20} />, url: 'https://github.com/Xfryy' },
+    { icon: <FaLinkedin size={20} />, url: 'https://www.linkedin.com/in/muhammad-faatih-al-ghifarri-candra-08a977368?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app' },
+    { icon: <FaInstagram size={20} />, url: 'https://www.instagram.com/zfryyless/profilecard/?igsh=MXNzemU3aDdkamgwbQ==' },
+    { icon: <FaFacebook size={20} />, url: 'https://www.facebook.com/share/1Acg41o7Fj/' }
   ];
 
   return (

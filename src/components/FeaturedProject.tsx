@@ -100,9 +100,9 @@ export default function FeaturedProject({
               animate={{ scale: 1 }}
               transition={{ delay: 0.5 }}
             ></motion.div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Role</div>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Role</div>
           </div>
-          <div className="text-base text-gray-900 dark:text-white">{role}</div>
+          <div style={{ color: 'var(--text-primary)' }}>{role}</div>
           
           <div className="flex gap-3 items-center mt-6">
             <motion.div 
@@ -111,7 +111,7 @@ export default function FeaturedProject({
               animate={{ scale: 1 }}
               transition={{ delay: 0.6 }}
             ></motion.div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Technologies</div>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Technologies</div>
           </div>
           <div className="flex flex-wrap gap-2">
             {technologies.map((tech, index) => (

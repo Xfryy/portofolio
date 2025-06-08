@@ -247,7 +247,12 @@ export default function CommentSection() {
             key={reply._id}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800"
+            className="p-3 rounded-lg border transition-all duration-300"
+            style={{
+              backgroundColor: 'var(--card-bg)',
+              borderColor: 'var(--card-border)',
+              color: 'var(--text-primary)',
+            }}
           >
             <div className="flex items-center gap-2">
               <Image
@@ -257,12 +262,12 @@ export default function CommentSection() {
                 height={24}
                 className="rounded-full"
               />
-              <span className="font-medium">{reply.username}</span>
-              <span className="text-sm text-gray-500">
+              <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{reply.username}</span>
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 {getTimeAgo(reply.createdAt)}
               </span>
             </div>
-            <p className="mt-2 break-words">{reply.content}</p>
+            <p className="mt-2 break-words" style={{ color: 'var(--text-secondary)' }}>{reply.content}</p>
           </motion.div>
         ))}
       </div>

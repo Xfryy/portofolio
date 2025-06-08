@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -86,8 +86,10 @@ export default function Navbar() {
   const [isDarkMode, setIsDarkMode] = useState(true); // State for theme
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const pathname = usePathname();
   const { data: session, status } = useSession();
+  const profileDropdownRef = useRef<HTMLDivElement | null>(null);
   
   // Improved scroll handler using requestAnimationFrame
   useEffect(() => {
@@ -147,11 +149,31 @@ export default function Navbar() {
       if (event.key === 'Escape' && mobileMenuOpen) {
         setMobileMenuOpen(false);
       }
+      if (event.key === 'Escape' && profileDropdownOpen) {
+        setProfileDropdownOpen(false);
+      }
     };
 
     window.addEventListener('keydown', handleEscKey);
     return () => window.removeEventListener('keydown', handleEscKey);
-  }, [mobileMenuOpen]);
+  }, [mobileMenuOpen, profileDropdownOpen]);
+
+  // Handle click outside profile dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setProfileDropdownOpen(false);
+      }
+    };
+
+    if (profileDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [profileDropdownOpen]);
 
   // Prevent body scroll when menu is open
   useEffect(() => {
@@ -189,6 +211,11 @@ export default function Navbar() {
     setIsSignInModalOpen(true);
   };
 
+  const handleSignOut = () => {
+    setProfileDropdownOpen(false);
+    signOut();
+  };
+
   // Dynamic styles based on theme
   const locationBgClass = isDarkMode ? 'bg-gray-900/40' : 'bg-white/60';
   const locationBorderClass = isDarkMode ? 'border-gray-800/50' : 'border-gray-300/50';
@@ -206,6 +233,9 @@ export default function Navbar() {
     ? 'bg-gradient-to-b from-gray-900 to-[#0A0D11]' 
     : 'bg-gradient-to-b from-gray-100 to-white';
   const mobileBorderClass = isDarkMode ? 'border-gray-800/50' : 'border-gray-300/50';
+  const dropdownBgClass = isDarkMode ? 'bg-gray-800/95' : 'bg-white/95';
+  const dropdownBorderClass = isDarkMode ? 'border-gray-700/50' : 'border-gray-300/50';
+  const dropdownTextClass = isDarkMode ? 'text-gray-300' : 'text-gray-600';
   
   return (
     <>
@@ -298,22 +328,98 @@ export default function Navbar() {
             {/* Auth buttons and user profile */}
             <div className="hidden md:flex items-center gap-2 ml-2">
               {status === 'authenticated' && session?.user ? (
-                <div className="flex items-center gap-2">
-                  {session.user.image && (
-                    <Image
-                      src={session.user.image}
-                      alt="Profile"
-                      width={32}
-                      height={32}
-                      className="rounded-full"
-                    />
-                  )}
-                  <button
-                    onClick={() => signOut()}
-                    className={`px-4 py-1.5 ${menuBgClass} ${menuTextClass} rounded-full transition-colors hover:bg-red-500/20`}
+                <div className="relative" ref={profileDropdownRef}>
+                  <motion.button
+                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                    className="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-gray-100/10 transition-colors"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    Sign Out
-                  </button>
+                    {session.user.image && (
+                      <Image
+                        src={session.user.image}
+                        alt="Profile"
+                        width={32}
+                        height={32}
+                        className="rounded-full"
+                      />
+                    )}
+                    <motion.svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}
+                      animate={{ rotate: profileDropdownOpen ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </motion.svg>
+                  </motion.button>
+
+                  {/* Profile Dropdown */}
+                  {profileDropdownOpen && (
+                    <motion.div
+                      className={`absolute right-0 top-full mt-2 w-56 ${dropdownBgClass} backdrop-blur-lg rounded-lg border ${dropdownBorderClass} shadow-lg overflow-hidden`}
+                      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {/* User Info */}
+                      <div className="px-4 py-3 border-b border-gray-700/30">
+                        <div className="flex items-center gap-3">
+                          {session.user.image && (
+                            <Image
+                              src={session.user.image}
+                              alt="Profile"
+                              width={40}
+                              height={40}
+                              className="rounded-full"
+                            />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>
+                              {session.user.name}
+                            </p>
+                            <p className={`text-xs ${dropdownTextClass} truncate`}>
+                              {session.user.email}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Sign Out Button */}
+                      <div className="py-1">
+                        <button
+                          onClick={handleSignOut}
+                          className={`w-full text-left px-4 py-2 text-sm ${dropdownTextClass} hover:bg-red-500/10 hover:text-red-500 transition-colors flex items-center gap-2`}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                          </svg>
+                          Sign Out
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
               ) : (
                 <button
@@ -345,14 +451,12 @@ export default function Navbar() {
                     <path d="M4.22 19.78l1.42-1.42"></path>
                     <path d="M18.36 5.64l1.42-1.42"></path>
                   </svg>
-                  <span>Light Mode</span>
                 </>
               ) : (
                 <>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79z"></path>
                   </svg>
-                  <span>Dark Mode</span>
                 </>
               )}
             </motion.button>
@@ -438,7 +542,7 @@ export default function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-4 mb-4 p-4 rounded-lg bg-white/5 backdrop-blur-sm">
                   {session.user.image && (
                     <Image
                       src={session.user.image}
@@ -448,16 +552,36 @@ export default function Navbar() {
                       className="rounded-full"
                     />
                   )}
-                  <span className={isDarkMode ? 'text-white' : 'text-gray-900'}>
-                    {session.user.name}
-                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'} truncate`}>
+                      {session.user.name}
+                    </p>
+                    <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} truncate`}>
+                      {session.user.email}
+                    </p>
+                  </div>
                 </div>
                 <motion.button
-                  className={`w-full p-3 rounded-full bg-red-500/20 text-red-500 transition-colors`}
-                  onClick={() => signOut()}
+                  className={`w-full p-3 rounded-full bg-red-500/20 text-red-500 transition-colors flex items-center justify-center gap-2`}
+                  onClick={handleSignOut}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                  </svg>
                   Sign Out
                 </motion.button>
               </motion.div>
@@ -475,6 +599,14 @@ export default function Navbar() {
                   whileTap={{ scale: 0.98 }}
                 >
                   Sign In
+                </motion.button>
+                <motion.button
+                  className={`w-full p-3 rounded-full ${menuBgClass} ${menuTextClass} transition-colors`}
+                  onClick={handleRegisterClick}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Create Account
                 </motion.button>
               </motion.div>
             )}
@@ -515,7 +647,6 @@ export default function Navbar() {
                     </svg>
                   )}
                 </motion.span>
-                <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
               </motion.button>
             </motion.div>
           </motion.div>

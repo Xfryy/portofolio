@@ -61,7 +61,7 @@ export default function BioSection({ bio }: BioSectionProps) {
               >
                 <div>
                   <h4 className="text-sm font-semibold mb-1 text-gray-500 dark:text-gray-400">Email</h4>
-                  <p className="text-sm">contact@faatih.dev</p>
+                  <p className="text-sm">Faricandra5@gmail.com</p>
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold mb-1 text-gray-500 dark:text-gray-400">Location</h4>

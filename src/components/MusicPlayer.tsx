@@ -1,173 +1,125 @@
-"use client";
+'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { useMusicPlayer } from '@/context/MusicPlayerContext';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { Music } from '@/types/music';
+import { FaPlay, FaPause, FaForward, FaBackward } from 'react-icons/fa';
 
-export default function MusicPlayer() {
-  const { 
-    currentSong, 
-    isPlaying, 
-    isExpanded, 
-    togglePlay, 
-    toggleExpanded,
-    nextSong,
-    prevSong,
-    progress 
-  } = useMusicPlayer();
-  
-  const [isMounted, setIsMounted] = useState(false);
-  const [isDiskRotating, setIsDiskRotating] = useState(false);
-  const [imageError, setImageError] = useState(false);
+interface MusicPlayerProps {
+  playlist: Music[];
+}
 
-  // Handle disk rotation
+export default function MusicPlayer({ playlist }: MusicPlayerProps) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTrack, setCurrentTrack] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const playNext = () => {
+    setCurrentTrack((prev) => (prev + 1) % playlist.length);
+  };
+
+  const playPrevious = () => {
+    setCurrentTrack((prev) => (prev - 1 + playlist.length) % playlist.length);
+  };
+
+  // Handle time updates for progress bar
+  const handleTimeUpdate = () => {
+    if (audioRef.current && audioRef.current.duration) {
+      const progressPercent = (audioRef.current.currentTime / audioRef.current.duration) * 100;
+      setProgress(progressPercent);
+    }
+  };
+
+  // Handle when song ends
+  const handleEnded = () => {
+    playNext();
+  };
+
+  // Handle when audio loads and is ready to play
+  const handleLoadedData = () => {
+    if (audioRef.current && isPlaying) {
+      audioRef.current.play();
+    }
+  };
+
+  // Effect to handle track changes
   useEffect(() => {
-    setIsDiskRotating(isPlaying);
-  }, [isPlaying]);
+    if (audioRef.current) {
+      audioRef.current.load(); // Reload the audio element with new source
+      setProgress(0); // Reset progress
+      
+      if (isPlaying) {
+        // If was playing, continue playing the new track
+        audioRef.current.play().catch((error) => {
+          console.error('Error playing audio:', error);
+          setIsPlaying(false);
+        });
+      }
+    }
+  }, [currentTrack, isPlaying]);
 
-  // Client-side only mounting
+  // Effect to setup event listeners
   useEffect(() => {
-    setIsMounted(true);
+    const audio = audioRef.current;
+    if (audio) {
+      audio.addEventListener('timeupdate', handleTimeUpdate);
+      audio.addEventListener('ended', handleEnded);
+      audio.addEventListener('loadeddata', handleLoadedData);
+      
+      // Cleanup function
+      return () => {
+        audio.removeEventListener('timeupdate', handleTimeUpdate);
+        audio.removeEventListener('ended', handleEnded);
+        audio.removeEventListener('loadeddata', handleLoadedData);
+      };
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Don't render on server side
-  if (!isMounted || !currentSong) return null;
+  const currentSong = playlist[currentTrack];
 
   return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed bottom-6 right-6 z-50 drop-shadow-lg"
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.8, opacity: 0 }}
-        transition={{ type: "spring", bounce: 0.25 }}
-      >
-        <motion.div
-          layout
-          className="bg-black/80 backdrop-blur-lg border border-white/20 overflow-hidden"
-          style={{ borderRadius: isExpanded ? '0.75rem' : '9999px' }}
-          animate={{ 
-            width: isExpanded ? 300 : 80,
-            height: isExpanded ? 96 : 80
-          }}
-          transition={{ 
-            type: "spring",
-            damping: 20,
-            stiffness: 300
-          }}
-        >
-          <div className="flex items-center h-full">
-            {/* Album Cover */}
-            <div 
-              className="relative min-w-[80px] w-20 h-20 cursor-pointer overflow-hidden"
-              style={{
-                borderRadius: '9999px'
-              }}
-              onClick={toggleExpanded}
-            >
-              <motion.div
-                className="w-full h-full"
-                animate={{ 
-                  rotate: isDiskRotating ? 360 : 0 
-                }}
-                transition={{ 
-                  rotate: { 
-                    duration: 8, 
-                    repeat: Infinity, 
-                    ease: "linear",
-                    repeatType: "loop"
-                  }
-                }}
-                style={{ 
-                  borderRadius: '9999px'
-                }}
-              >
-                <Image
-                  src={imageError ? '/music/default-cover.jpg' : currentSong.cover}
-                  alt={currentSong.title}
-                  fill
-                  className="object-cover rounded-full"
-                  priority
-                  onError={() => setImageError(true)}
-                />
-              </motion.div>
-            </div>
-
-            {/* Expanded Content */}
-            {isExpanded && (
-              <motion.div
-                className="flex-1 flex flex-col justify-between h-full pl-4 pr-2 py-2"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="min-w-0 flex-1">
-                  <p className="text-white text-sm font-medium truncate">
-                    {currentSong.title}
-                  </p>
-                  <p className="text-gray-400 text-xs truncate">
-                    {currentSong.artist}
-                  </p>
-                </div>
-
-                {/* Progress bar */}
-                <div className="w-full bg-gray-700/50 h-1 rounded-full mb-2 mt-1">
-                  <div 
-                    className="bg-blue-500 h-full rounded-full" 
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <motion.button
-                    onClick={prevSong}
-                    className="text-white/80 hover:text-white p-1"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="19 20 9 12 19 4 19 20"></polygon>
-                      <line x1="5" y1="19" x2="5" y2="5"></line>
-                    </svg>
-                  </motion.button>
-
-                  <motion.button
-                    onClick={togglePlay}
-                    className="text-white/80 hover:text-white bg-blue-500/20 rounded-full p-2"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    {isPlaying ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="6" y="4" width="4" height="16"></rect>
-                        <rect x="14" y="4" width="4" height="16"></rect>
-                      </svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                      </svg>
-                    )}
-                  </motion.button>
-
-                  <motion.button
-                    onClick={nextSong}
-                    className="text-white/80 hover:text-white p-1"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="5 4 15 12 5 20 5 4"></polygon>
-                      <line x1="19" y1="5" x2="19" y2="19"></line>
-                    </svg>
-                  </motion.button>
-                </div>
-              </motion.div>
-            )}
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+    <div 
+      className="fixed bottom-4 left-4 z-50 p-4 rounded-lg shadow-lg max-w-[300px] border transition-all duration-300"
+      style={{
+        backgroundColor: 'var(--card-bg)',
+        borderColor: 'var(--card-border)',
+        backdropFilter: 'blur(12px)',
+      }}
+    >
+      <audio ref={audioRef} src={currentSong.url} preload="metadata" />
+      <div className="mb-2">
+        <h3 className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{currentSong.title}</h3>
+        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{currentSong.artist}</p>
+      </div>
+      <div className="flex items-center justify-center gap-4">
+        <button onClick={playPrevious} className="hover:text-blue-500 transition-colors" style={{ color: 'var(--text-primary)' }}>
+          <FaBackward size={14} />
+        </button>
+        <button onClick={togglePlay} className="hover:text-blue-500 transition-colors" style={{ color: 'var(--text-primary)' }}>
+          {isPlaying ? <FaPause size={18} /> : <FaPlay size={18} />}
+        </button>
+        <button onClick={playNext} className="hover:text-blue-500 transition-colors" style={{ color: 'var(--text-primary)' }}>
+          <FaForward size={14} />
+        </button>
+      </div>
+      <div className="mt-2 h-1 rounded-full" style={{ backgroundColor: 'var(--card-border)' }}>
+        <div
+          className="h-full bg-blue-500 rounded-full transition-all duration-100"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </div>
   );
 }
