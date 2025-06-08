@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Music } from '@/types/music';
-import { FaPlay, FaPause, FaForward, FaBackward } from 'react-icons/fa';
+import { FaPlay, FaPause, FaForward, FaBackward, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 interface MusicPlayerProps {
   playlist: Music[];
@@ -12,6 +12,7 @@ export default function MusicPlayer({ playlist }: MusicPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [isMinimized, setIsMinimized] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const togglePlay = () => {
@@ -88,38 +89,60 @@ export default function MusicPlayer({ playlist }: MusicPlayerProps) {
   }, []);
 
   const currentSong = playlist[currentTrack];
-
   return (
     <div 
-      className="fixed bottom-4 left-4 z-50 p-4 rounded-lg shadow-lg max-w-[300px] border transition-all duration-300"
+      className={`fixed bottom-4 left-4 z-50 p-4 rounded-lg shadow-lg border transition-all duration-300 ${
+        isMinimized ? 'w-[60px] md:max-w-[300px]' : 'w-[300px]'
+      }`}
       style={{
         backgroundColor: 'var(--card-bg)',
         borderColor: 'var(--card-border)',
         backdropFilter: 'blur(12px)',
       }}
     >
+      <div className="absolute top-2 right-2">
+        <button
+          onClick={() => setIsMinimized(!isMinimized)}
+          className="hover:text-blue-500 transition-colors p-1"
+          style={{ color: 'var(--text-primary)' }}
+        >
+          {isMinimized ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
+        </button>
+      </div>
+
       <audio ref={audioRef} src={currentSong.url} preload="metadata" />
-      <div className="mb-2">
-        <h3 className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{currentSong.title}</h3>
-        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{currentSong.artist}</p>
-      </div>
-      <div className="flex items-center justify-center gap-4">
-        <button onClick={playPrevious} className="hover:text-blue-500 transition-colors" style={{ color: 'var(--text-primary)' }}>
-          <FaBackward size={14} />
-        </button>
-        <button onClick={togglePlay} className="hover:text-blue-500 transition-colors" style={{ color: 'var(--text-primary)' }}>
-          {isPlaying ? <FaPause size={18} /> : <FaPlay size={18} />}
-        </button>
-        <button onClick={playNext} className="hover:text-blue-500 transition-colors" style={{ color: 'var(--text-primary)' }}>
-          <FaForward size={14} />
-        </button>
-      </div>
-      <div className="mt-2 h-1 rounded-full" style={{ backgroundColor: 'var(--card-border)' }}>
-        <div
-          className="h-full bg-blue-500 rounded-full transition-all duration-100"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
+      
+      {isMinimized ? (
+        <div className="flex items-center justify-center">
+          <button onClick={togglePlay} className="hover:text-blue-500 transition-colors" style={{ color: 'var(--text-primary)' }}>
+            {isPlaying ? <FaPause size={18} /> : <FaPlay size={18} />}
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="mb-2">
+            <h3 className="text-sm font-semibold truncate" style={{ color: 'var(--text-primary)' }}>{currentSong.title}</h3>
+            <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>{currentSong.artist}</p>
+          </div>
+          <div className="flex items-center justify-center gap-4">
+            <button onClick={playPrevious} className="hover:text-blue-500 transition-colors" style={{ color: 'var(--text-primary)' }}>
+              <FaBackward size={14} />
+            </button>
+            <button onClick={togglePlay} className="hover:text-blue-500 transition-colors" style={{ color: 'var(--text-primary)' }}>
+              {isPlaying ? <FaPause size={18} /> : <FaPlay size={18} />}
+            </button>
+            <button onClick={playNext} className="hover:text-blue-500 transition-colors" style={{ color: 'var(--text-primary)' }}>
+              <FaForward size={14} />
+            </button>
+          </div>
+          <div className="mt-2 h-1 rounded-full" style={{ backgroundColor: 'var(--card-border)' }}>
+            <div
+              className="h-full bg-blue-500 rounded-full transition-all duration-100"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

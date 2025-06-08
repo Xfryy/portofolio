@@ -74,21 +74,52 @@ export default function Hero({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link 
-              href="/work"
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center gap-2 transition-all duration-300 group w-fit hover:shadow-lg hover:shadow-blue-500/20"
+        >          <div className="flex flex-col sm:flex-row gap-4">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <span>View my work</span>
-              <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
-            </Link>
+              <Link 
+                href="/work"
+                className="group relative inline-flex items-center gap-2 px-6 py-3 font-medium rounded-full overflow-hidden"
+                style={{
+                  backgroundColor: 'var(--card-bg)',
+                  borderColor: 'var(--card-border)',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  <span>View my work</span>
+                  <motion.span
+                    className="text-blue-500"
+                    initial={{ x: 0 }}
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    →
+                  </motion.span>
+                </span>
+                <div
+                  className="absolute inset-0 bg-blue-500 transform scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100 opacity-10"
+                />
+              </Link>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+            </motion.div>
           </div>
 
           {showProfile && (
             <Link href="/about" className="flex items-center gap-4 group">
               <motion.div 
-                className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-gray-300 dark:border-gray-700 hover:border-blue-500 transition-all duration-300"
+                className="relative w-14 h-14 rounded-full overflow-hidden ring-2 ring-blue-500/20 hover:ring-blue-500 transition-all duration-300"
                 whileHover={{ scale: 1.1 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >

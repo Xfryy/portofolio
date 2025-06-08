@@ -8,6 +8,9 @@ import Hero from '@/components/hero';
 import FeaturedProject from '@/components/FeaturedProject';
 import PageTransition from '@/components/PageTransition';
 import ChatWidget from '@/components/ChatWidget';
+import TechnicalSkills from '@/components/TechnicalSkills';
+import ServicesSection from '@/components/ServicesSection'; // Import the new component
+import CodingJourneySection from '@/components/CodingJourneySection';
 
 // Loading component for Spline
 const SplineLoading = () => (
@@ -54,12 +57,46 @@ export default function Home() {
 
           {/* Button to toggle Spline */}
           <div className="flex justify-center mt-12 mb-6">
-            <button
+            <motion.button
               onClick={() => setShowSpline(prev => !prev)}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="group relative px-6 py-3 text-sm font-medium rounded-full overflow-hidden transition-all duration-300"
+              style={{
+                backgroundColor: 'var(--card-bg)',
+                borderColor: 'var(--card-border)',
+                color: 'var(--text-primary)',
+              }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {showSpline ? 'Hide 3D Scene' : 'Show 3D Scene'}
-            </button>
+              <span className="relative z-10 flex items-center gap-2">
+                {showSpline ? (
+                  <>
+                    <motion.span
+                      initial={{ rotate: 0 }}
+                      animate={{ rotate: 180 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      ⬆️
+                    </motion.span>
+                    Hide 3D Scene
+                  </>
+                ) : (
+                  <>
+                    <motion.span
+                      initial={{ rotate: 180 }}
+                      animate={{ rotate: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      ⬇️
+                    </motion.span>
+                    Show 3D Scene
+                  </>
+                )}
+              </span>
+              <div
+                className="absolute inset-0 bg-blue-500 transform scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100 opacity-10"
+              />
+            </motion.button>
           </div>
 
           {/* Spline Scene Section */}
@@ -98,7 +135,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-transparent pointer-events-none"></div>
               </div>
             </motion.div>
-          )}
+          )} 
 
           {/* Featured Project */}
           <div className="mt-24">
@@ -111,56 +148,14 @@ export default function Home() {
             />
           </div>
 
-          {/* What I Do Section */}
-          <div className="mt-24 border-t border-themed pt-12">
-            <motion.h2 
-              className="flex items-center gap-4 text-2xl md:text-3xl mb-8 text-primary"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <span className="h-1 w-12 bg-blue-500 rounded-full"></span>
-              What I Do
-            </motion.h2>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Web Development",
-                  description: "Building responsive, accessible, and performant websites with modern technologies.",
-                  icon: "💻"
-                },
-                {
-                  title: "3D & Interactive Design",
-                  description: "Creating immersive 3D experiences and interactive elements that engage users.",
-                  icon: "🎨"
-                },
-                {
-                  title: "Performance Optimization",
-                  description: "Ensuring your website loads quickly and runs smoothly on all devices.",
-                  icon: "⚡"
-                }
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  className="rounded-xl p-6 border transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-500"
-                  style={{
-                    backgroundColor: 'var(--card-bg)',
-                    borderColor: 'var(--card-border)',
-                    color: 'var(--text-primary)',
-                  }}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -5 }}
-                >
-                  <div className="text-3xl mb-4">{item.icon}</div>
-                  <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                  <p>{item.description}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
+          {/* Coding Journey Section */}
+          <CodingJourneySection />
+
+          {/* Technical Skills Section */}
+          <TechnicalSkills />
+
+          {/* Services Section - Replaces the old "What I Do" section */}
+          <ServicesSection />
         </div>
       </div>
     </PageTransition>

@@ -67,7 +67,8 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <motion.div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-md"
+        className="absolute inset-0 backdrop-blur-md"
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -75,7 +76,11 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
       />
       
       <motion.div
-        className="relative w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl"
+        className="relative w-full max-w-md rounded-2xl shadow-xl p-8"
+        style={{
+          backgroundColor: 'var(--card-bg)',
+          borderColor: 'var(--card-border)',
+        }}
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
@@ -84,7 +89,8 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
           <motion.div 
             whileHover={{ scale: 1.1, rotate: 5 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            className="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-full inline-flex mb-4"
+            className="p-3 rounded-full inline-flex mb-4"
+            style={{ backgroundColor: 'var(--card-border)' }}
           >
             <Image
               src="/Components/f.png"
@@ -95,10 +101,10 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
             />
           </motion.div>
 
-          <h2 className="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white">
+          <h2 className="mt-2 text-3xl font-extrabold" style={{ color: 'var(--text-primary)' }}>
             Create an account
           </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
             Join us and start sharing your work
           </p>
         </div>
@@ -106,7 +112,7 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label htmlFor="username" className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
                 Username
               </label>
               <input
@@ -114,7 +120,12 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
                 name="username"
                 type="text"
                 required
-                className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-xl relative block w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors"
+                style={{
+                  backgroundColor: 'var(--input-bg)',
+                  borderColor: 'var(--card-border)',
+                  color: 'var(--text-primary)',
+                }}
                 placeholder="Choose a username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -122,7 +133,7 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
             </div>
             
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
                 Email address
               </label>
               <input
@@ -131,7 +142,12 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-xl relative block w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors"
+                style={{
+                  backgroundColor: 'var(--input-bg)',
+                  borderColor: 'var(--card-border)',
+                  color: 'var(--text-primary)',
+                }}
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -139,7 +155,7 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
             </div>
 
             <div>
-              <label htmlFor="register-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label htmlFor="register-password" className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
                 Password
               </label>
               <input
@@ -147,7 +163,12 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
                 name="password"
                 type="password"
                 required
-                className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-xl relative block w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors"
+                style={{
+                  backgroundColor: 'var(--input-bg)',
+                  borderColor: 'var(--card-border)',
+                  color: 'var(--text-primary)',
+                }}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -155,7 +176,7 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
             </div>
 
             <div>
-              <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label htmlFor="confirm-password" className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
                 Confirm Password
               </label>
               <input
@@ -163,7 +184,12 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
                 name="confirmPassword"
                 type="password"
                 required
-                className="appearance-none rounded-xl relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-xl relative block w-full px-4 py-3 border focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-colors"
+                style={{
+                  backgroundColor: 'var(--input-bg)',
+                  borderColor: 'var(--card-border)',
+                  color: 'var(--text-primary)',
+                }}
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -175,7 +201,11 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-sm text-center px-4 py-2 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded-lg"
+              className="text-sm text-center px-4 py-2 rounded-lg"
+              style={{
+                backgroundColor: 'var(--error-bg)',
+                color: 'var(--error-text)',
+              }}
             >
               {error}
             </motion.div>
@@ -200,11 +230,12 @@ export default function RegisterModal({ isOpen, onClose, onSignInClick }: Regist
         </form>
 
         <div className="text-center mt-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p style={{ color: 'var(--text-secondary)' }} className="text-sm">
             Already have an account?{' '}
             <button
               onClick={onSignInClick}
-              className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+              className="font-medium hover:text-blue-500 transition-colors"
+              style={{ color: 'var(--text-primary)' }}
             >
               Sign in
             </button>

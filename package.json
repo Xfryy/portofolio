@@ -17,6 +17,7 @@
     "@types/bcryptjs": "^3.0.0",
     "bcryptjs": "^3.0.2",
     "framer-motion": "^12.12.1",
+    "lucide-react": "^0.513.0",
     "mongodb": "^6.16.0",
     "mongoose": "^8.15.0",
     "music-metadata": "^11.2.1",
