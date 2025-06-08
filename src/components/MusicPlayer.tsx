@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -13,14 +14,23 @@ export default function MusicPlayer({ playlist }: MusicPlayerProps) {
   const [currentTrack, setCurrentTrack] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  // Ensure component only renders after hydration
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const togglePlay = () => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
       } else {
-        audioRef.current.play();
+        audioRef.current.play().catch((error) => {
+          console.error('Error playing audio:', error);
+          setIsPlaying(false);
+        });
       }
       setIsPlaying(!isPlaying);
     }
@@ -50,13 +60,16 @@ export default function MusicPlayer({ playlist }: MusicPlayerProps) {
   // Handle when audio loads and is ready to play
   const handleLoadedData = () => {
     if (audioRef.current && isPlaying) {
-      audioRef.current.play();
+      audioRef.current.play().catch((error) => {
+        console.error('Error playing audio:', error);
+        setIsPlaying(false);
+      });
     }
   };
 
   // Effect to handle track changes
   useEffect(() => {
-    if (audioRef.current) {
+    if (audioRef.current && isMounted) {
       audioRef.current.load(); // Reload the audio element with new source
       setProgress(0); // Reset progress
       
@@ -68,10 +81,12 @@ export default function MusicPlayer({ playlist }: MusicPlayerProps) {
         });
       }
     }
-  }, [currentTrack, isPlaying]);
+  }, [currentTrack, isPlaying, isMounted]);
 
   // Effect to setup event listeners
   useEffect(() => {
+    if (!isMounted) return;
+    
     const audio = audioRef.current;
     if (audio) {
       audio.addEventListener('timeupdate', handleTimeUpdate);
@@ -85,10 +100,15 @@ export default function MusicPlayer({ playlist }: MusicPlayerProps) {
         audio.removeEventListener('loadeddata', handleLoadedData);
       };
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isMounted]);
+
+  // Don't render until after hydration
+  if (!isMounted) {
+    return null;
+  }
 
   const currentSong = playlist[currentTrack];
+  
   return (
     <div 
       className={`fixed bottom-4 left-4 z-50 p-4 rounded-lg shadow-lg border transition-all duration-300 ${

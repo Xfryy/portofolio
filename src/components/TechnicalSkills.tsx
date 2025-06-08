@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Code2, Database, Cloud, Zap, Star, TrendingUp } from 'lucide-react';
 
 interface SkillCategory {
@@ -59,39 +59,62 @@ const skillCategories: SkillCategory[] = [
   },
 ];
 
+// Pre-defined particle positions to avoid hydration mismatch
+const particlePositions = [
+  { left: 15, top: 20 },
+  { left: 85, top: 15 },
+  { left: 45, top: 80 },
+  { left: 75, top: 40 },
+  { left: 25, top: 60 },
+  { left: 90, top: 75 },
+  { left: 10, top: 45 },
+  { left: 60, top: 25 },
+  { left: 35, top: 90 },
+  { left: 80, top: 65 },
+  { left: 55, top: 10 },
+  { left: 20, top: 85 },
+];
+
 export default function TechnicalSkills() {
   const [hoveredCategory, setHoveredCategory] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<number>(0);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <section className="py-24 relative overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent" />
       
-      {/* Floating Particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-blue-400 rounded-full opacity-20"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              opacity: [0.2, 0.5, 0.2],
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 4 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-              ease: "easeInOut"
-            }}
-          />
-        ))}
-      </div>
+      {/* Floating Particles - Only render after hydration */}
+      {isMounted && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {particlePositions.map((position, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 bg-blue-400 rounded-full opacity-20"
+              style={{
+                left: `${position.left}%`,
+                top: `${position.top}%`,
+              }}
+              animate={{
+                y: [0, -30, 0],
+                opacity: [0.2, 0.5, 0.2],
+                scale: [1, 1.5, 1],
+              }}
+              transition={{
+                duration: 4 + (i % 3),
+                repeat: Infinity,
+                delay: i * 0.3,
+                ease: "easeInOut"
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

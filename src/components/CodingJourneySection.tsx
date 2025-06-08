@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Code, GitBranch, Terminal, Database, Layout, Braces, Sparkles, Trophy, Rocket } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface JourneyStep {
   year: string;
@@ -16,6 +16,19 @@ interface JourneyStep {
 
 const CodingJourneySection = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [windowHeight, setWindowHeight] = useState(1000); // Default fallback value
+
+  useEffect(() => {
+    // Set window height after component mounts (client-side only)
+    setWindowHeight(window.innerHeight);
+    
+    const handleResize = () => {
+      setWindowHeight(window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const journeySteps: JourneyStep[] = [
     {
@@ -60,7 +73,8 @@ const CodingJourneySection = () => {
       description: 'Advanced to Next.js for full-stack applications. Focused on server-side rendering and API routes.',
       icon: Terminal,
       skills: ['Next.js', 'SSR', 'API Routes', 'Prisma'],
-      achievement: 'Production Apps Deployed',      color: 'from-blue-400 to-blue-600'
+      achievement: 'Production Apps Deployed',
+      color: 'from-blue-400 to-blue-600'
     },
     {
       year: '2025',
@@ -167,7 +181,7 @@ const CodingJourneySection = () => {
           {/* Glowing effect */}
           <motion.div
             className="w-full h-20 bg-gradient-to-b from-white/50 to-transparent blur-sm"
-            animate={{ y: [-80, window.innerHeight] }}
+            animate={{ y: [-80, windowHeight] }}
             transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
           />
         </motion.div>
